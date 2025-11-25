@@ -2,7 +2,6 @@ package org.example
 
 import pt.isel.canvas.CYAN
 import kotlin.math.sign
-import kotlin.random.Random
 
 
 const val BALL_COUNT_FONTSIZE = 30
@@ -21,11 +20,11 @@ data class Ball(val x: Int = 0, val y: Int = 0, val deltaX: Int = 0, val deltaY:
 * A nova bola está sempre a movimentar-se para cima
 * */
 fun generateRandomBall(): Ball {
-    val xCord = Random.nextInt(from = CANVAS_INVALID_POS_OFFSET, until = WIDTH - CANVAS_INVALID_POS_OFFSET)
+    val xCord = WIDTH / 2
     val yCord = HEIGHT
 
-    val xDelta = Random.nextInt(from = -MAX_DELTA_X, until = MAX_DELTA_X)
-    val yDelta = Random.nextInt(from = MIN_DELTA_Y, until = MAX_DELTA_Y)
+    val xDelta = 0
+    val yDelta = MAX_DELTA_Y
 
 
     return Ball(x = xCord, y = yCord, deltaX = xDelta, deltaY = -yDelta)
@@ -36,9 +35,9 @@ fun generateRandomBall(): Ball {
 * */
 fun Ball.isCollidingWithRacket(racket: Racket): Collision {
     val horizontalCollision = (
-        this.x + BALL_RADIUS in racket.x..(racket.x + RACKET_WIDTH) ||
-            this.x - BALL_RADIUS in racket.x..(racket.x + RACKET_WIDTH)
-        )
+            this.x + BALL_RADIUS in racket.x..(racket.x + RACKET_WIDTH) ||
+                    this.x - BALL_RADIUS in racket.x..(racket.x + RACKET_WIDTH)
+            )
     val verticalCollision = (this.y + BALL_RADIUS) in racket.y..(racket.y + RACKET_HEIGHT)
 
     return when {
@@ -52,25 +51,25 @@ fun Ball.isCollidingWithRacket(racket: Racket): Collision {
 
 fun Ball.checkBricksCollision(bricks: List<Brick>): Collision {
     for (brick in bricks) {
-        val res = this.isCollidingWithBrick(brick)
-        if (res != Collision.NONE) return res
+        val res = checkBrickCollision(this, brick)
+        if (res != Collision.NONE) {
+            println("$res -> $this -> $brick")
+            return res
+        }
     }
 
 
     return Collision.NONE
 }
 
-
 fun Ball.isCollidingWithBrick(brick: Brick): Collision {
-    return when {
-        (this.x + BALL_RADIUS >= brick.x && this.x + BALL_RADIUS <= brick.x + BRICK_WIDTH)
-            &&
-            (this.y + BALL_RADIUS >= brick.y && this.y + BALL_RADIUS <= brick.y + BRICK_HEIGHT)
-            -> {
-            println("collsion" + brick)
-            Collision.BOTH
-        }
+    val horCollision = checkBrickHorizontalCollision(this, brick)
+    val verCollision = checkBrickVerticalCollision(this, brick)
 
+    return when {
+        horCollision != Collision.NONE && verCollision == Collision.NONE -> Collision.HORIZONTAL
+        verCollision != Collision.NONE && horCollision == Collision.NONE -> Collision.VERTICAL
+        horCollision != Collision.NONE && verCollision != Collision.NONE -> Collision.BOTH
         else -> Collision.NONE
     }
 }
@@ -114,6 +113,18 @@ fun updateBallAfterCollisionArea(ball: Ball, areaCollision: Collision): Ball {
 }
 
 /*
+* Atualiza o deltaX e deltaY da bola dependendo da colisão detetada com a Area de jogo*/
+fun updateBallAfterCollisionBrick(ball: Ball, brickCollision: Collision): Ball {
+    return when {
+        brickCollision == Collision.BOTH -> ball.copy(deltaX = -ball.deltaX, deltaY = -ball.deltaY)
+        brickCollision == Collision.HORIZONTAL -> ball.copy(deltaX = -ball.deltaX)
+        brickCollision == Collision.VERTICAL -> ball.copy(deltaY = -ball.deltaY)
+        else -> ball
+    }
+}
+
+
+/*
 * Verifica a colisão com a Raquete, ajusta o novo DeltaX após a colisão e atualiza
 * */
 fun updateBallAfterCollisionRacket(ball: Ball, racket: Racket): Ball {
@@ -132,11 +143,11 @@ fun updateBallAfterCollisionRacket(ball: Ball, racket: Racket): Ball {
 * */
 fun updateBallMovementAfterCollision(
     ball: Ball, racket: Racket, racketCollision: Collision, areaCollision: Collision,
-    bricksCollision: Collision
+    brickCollision: Collision
 ) = when {
     racketCollision == Collision.BOTH -> updateBallAfterCollisionRacket(ball, racket)
     areaCollision != Collision.NONE -> updateBallAfterCollisionArea(ball, areaCollision)
-    bricksCollision != Collision.NONE -> updateBallAfterCollisionArea(ball, areaCollision)
+    brickCollision != Collision.NONE -> updateBallAfterCollisionBrick(ball, brickCollision)
     else -> ball
 }
 

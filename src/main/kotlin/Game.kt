@@ -99,7 +99,7 @@ fun checkAndUpdateBallMovementAfterCollision(ball: Ball, racket: Racket, bricks:
         racket = racket,
         racketCollision = ball.isCollidingWithRacket(racket = racket),
         areaCollision = ball.isCollidingWithArea(),
-        bricksCollision = ball.checkBricksCollision(bricks)
+        brickCollision = ball.checkBricksCollision(bricks)
     )
 
 fun drawBricks(bricks: List<Brick>) {
@@ -117,8 +117,8 @@ fun drawBricks(bricks: List<Brick>) {
 
 fun generateWallBricks(): List<Brick> {
     var lista: List<Brick> = emptyList()
-    for (x in LeftMarginBricks..WIDTH - RightMarginBricks * 2 step BRICK_WIDTH) {
-        for (y in TopMarginBricks..TopMarginBricks * 1 step BRICK_WIDTH) {
+    for (x in LeftMarginBricks * 4..WIDTH - RightMarginBricks * 4 step BRICK_WIDTH) {
+        for (y in TopMarginBricks..TopMarginBricks + BRICK_HEIGHT * 3 step BRICK_HEIGHT + 2) {
             lista = lista + Brick(x, y, BrickType.entries.random())
         }
     }

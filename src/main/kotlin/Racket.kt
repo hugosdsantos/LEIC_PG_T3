@@ -3,7 +3,7 @@ package org.example
 import pt.isel.canvas.RED
 import pt.isel.canvas.WHITE
 
-const val RACKET_CENTRAL_ZONE = 40
+const val RACKET_CENTRAL_ZONE = 10
 const val RACKET_EDGE_ZONE = 10
 const val RACKET_MIDDLE_ZONE = 15
 const val RACKET_EDGE_ZONE_DELTA_CHANGE = 3
