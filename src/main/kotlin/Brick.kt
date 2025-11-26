@@ -9,29 +9,34 @@ const val TopMarginBricks = BRICK_HEIGHT * 3
 const val LeftMarginBricks = BRICK_WIDTH
 const val RightMarginBricks = BRICK_WIDTH
 const val SINGLE_HIT = 1
-const val DOUBLE_HIT = 1
+const val DOUBLE_HIT = 2
 const val INDESTRUCTIBLE = 0
-const val ORANGE_COLOR = 0xF59827
-const val SILVER_COLOR = 0x999999
-const val GOLD_COLOR = 0xF59827
+const val ORANGE_COLOR = 0xFFA500
+const val SILVER_COLOR = 0xC0C0C0
+const val GOLD_COLOR = 0xDAA520
 
 const val BRICK_HORIZONTAL_DETECTION_OFFSET = MAX_DELTA_X
 const val BRICK_VERTICAL_DETECTION_OFFSET = MAX_DELTA_Y
 
 enum class BrickType(val points: Int, val hits: Int, val color: Int) {
-    WHITE(points = 1, hits = SINGLE_HIT, color = pt.isel.canvas.WHITE),
-    ORANGE(points = 2, hits = SINGLE_HIT, color = ORANGE_COLOR),
-    CYAN(points = 3, hits = SINGLE_HIT, color = pt.isel.canvas.CYAN),
-    GREEN(points = 4, hits = SINGLE_HIT, color = pt.isel.canvas.GREEN),
-    RED(points = 6, hits = SINGLE_HIT, color = pt.isel.canvas.RED),
-    BLUE(points = 7, hits = SINGLE_HIT, color = pt.isel.canvas.BLUE),
-    MAGENTA(points = 8, hits = SINGLE_HIT, color = pt.isel.canvas.MAGENTA),
     YELLOW(points = 9, hits = SINGLE_HIT, color = pt.isel.canvas.YELLOW),
+    MAGENTA(points = 8, hits = SINGLE_HIT, color = pt.isel.canvas.MAGENTA),
+    BLUE(points = 7, hits = SINGLE_HIT, color = pt.isel.canvas.BLUE),
+    RED(points = 6, hits = SINGLE_HIT, color = pt.isel.canvas.RED),
+    GREEN(points = 4, hits = SINGLE_HIT, color = pt.isel.canvas.GREEN),
+    CYAN(points = 3, hits = SINGLE_HIT, color = pt.isel.canvas.CYAN),
+    ORANGE(points = 2, hits = SINGLE_HIT, color = ORANGE_COLOR),
+    WHITE(points = 1, hits = SINGLE_HIT, color = pt.isel.canvas.WHITE),
     SILVER(points = 0, hits = DOUBLE_HIT, color = SILVER_COLOR),
     GOLD(points = 0, hits = INDESTRUCTIBLE, color = GOLD_COLOR),
 }
 
 data class Brick(val x: Int, val y: Int, val type: BrickType, val hitCounter: Int = 0)
+
+data class BricksRow(val bricks: List<BrickType>)
+
+data class BricksColumn(val rows: List<BricksRow>)
+
 
 fun checkBrickHorizontalCollision(ball: Ball, brick: Brick): Collision {
     if (ball.y + BALL_RADIUS in brick.y..brick.y + BRICK_HEIGHT) {
@@ -55,6 +60,9 @@ fun checkBrickVerticalCollision(ball: Ball, brick: Brick): Collision {
     return Collision.NONE
 }
 
+/*
+* IMPROVE ON IT
+* */
 fun checkBrickCollision(ball: Ball, brick: Brick): Collision {
 
     // ponto mais próximo dentro do retângulo
@@ -73,6 +81,28 @@ fun checkBrickCollision(ball: Ball, brick: Brick): Collision {
         else
             Collision.VERTICAL     // bateu em cima/baixo
     }
-
     return Collision.NONE
 }
+
+val basicTypes = BrickType.entries.filter { it.hits == SINGLE_HIT }
+val allColors: BricksColumn = BricksColumn(basicTypes.map { BricksRow(listOf(it, it, it)) })
+val middleColors: BricksColumn = BricksColumn(
+    rows = listOf(
+        BricksRow(bricks = listOf(BrickType.WHITE, BrickType.GOLD, BrickType.WHITE)),
+        BricksRow(bricks = listOf(BrickType.ORANGE, BrickType.ORANGE, BrickType.ORANGE)),
+        BricksRow(bricks = listOf(BrickType.CYAN, BrickType.CYAN, BrickType.CYAN)),
+        BricksRow(bricks = listOf(BrickType.GREEN, BrickType.GREEN, BrickType.GREEN)),
+        BricksRow(bricks = listOf(BrickType.RED, BrickType.RED, BrickType.RED)),
+        BricksRow(bricks = listOf(BrickType.BLUE, BrickType.BLUE, BrickType.BLUE)),
+        BricksRow(bricks = listOf(BrickType.MAGENTA, BrickType.MAGENTA, BrickType.MAGENTA)),
+        BricksRow(bricks = listOf(BrickType.SILVER, BrickType.SILVER, BrickType.SILVER)),
+    )
+)
+val bricksLayout: List<BricksColumn> = listOf(
+    allColors,
+    middleColors,
+    allColors
+)
+
+
+

@@ -35,7 +35,7 @@ data class Game(
 val arena = Canvas(WIDTH, HEIGHT, BACKGROUND_COLOR)
 
 fun gameStart() {
-    var game = Game(bricks = generateWallBricks(), balls = listOf(generateRandomBall()))
+    var game = Game(bricks = generateInitialBricksLayout(bricksLayout), balls = listOf(generateRandomBall()))
 
     arena.onTimeProgress(period = TIME_TICK_MLS) {
         arena.erase()
@@ -78,9 +78,9 @@ fun drawBallsCounter(balls: List<Ball>) {
 * A cada step do jogo, remove as bolas fora de jogo, verifica as colisões e atualiza os movimentos das bolas para serem desenhadas novamente.
 * */
 fun handleGameBallsBehaviour(balls: List<Ball>, racket: Racket, bricks: List<Brick>): List<Ball> {
-    val filteredBalls = filterBallsOutOfBounds(balls = balls)
+    //val filteredBalls = filterallsOutOfBounds(balls = balls)
     val newBallsUpdated =
-        filteredBalls.map { checkAndUpdateBallMovementAfterCollision(ball = it, racket = racket, bricks) }
+        balls.map { checkAndUpdateBallMovementAfterCollision(ball = it, racket = racket, bricks) }
     val ballsMoved = updateBallsMovement(balls = newBallsUpdated)
     return ballsMoved
 }
@@ -103,13 +103,21 @@ fun checkAndUpdateBallMovementAfterCollision(ball: Ball, racket: Racket, bricks:
     )
 
 fun drawBricks(bricks: List<Brick>) {
+    val BRICK_STROKE_OFFSET_ADJUSTMENT = 2
     bricks.forEach {
         arena.drawRect(
             x = it.x,
             y = it.y,
             width = BRICK_WIDTH,
             height = BRICK_HEIGHT,
-            color = it.type.color,
+            color = it.type.color
+        )
+        arena.drawRect(
+            x = it.x + BRICK_STROKE_OFFSET_ADJUSTMENT,
+            y = it.y + BRICK_STROKE_OFFSET_ADJUSTMENT,
+            width = BRICK_WIDTH - BRICK_STROKE_OFFSET_ADJUSTMENT,
+            height = BRICK_HEIGHT - BRICK_STROKE_OFFSET_ADJUSTMENT,
+            color = BLACK,
             thickness = 2
         )
     }
@@ -123,6 +131,31 @@ fun generateWallBricks(): List<Brick> {
         }
     }
     return lista
+}
+
+fun generateInitialBricksLayout(layout: List<BricksColumn>): List<Brick> {
+    var lista: List<Brick> = emptyList()
+    var y = TopMarginBricks * 3
+    var x = 0
+    var initialX = 0
+    var columnSize = 0
+
+    for (column in layout) {
+        column.rows.forEach {
+            columnSize = it.bricks.size
+            it.bricks.forEach {
+                x += BRICK_WIDTH
+                lista = lista + Brick(x, y, it)
+            }
+            y += BRICK_HEIGHT
+            x = initialX
+        }
+        initialX += BRICK_WIDTH * (columnSize + 1)
+        x = initialX
+        y = TopMarginBricks * 3
+    }
+
+    return lista;
 }
 
 /*
