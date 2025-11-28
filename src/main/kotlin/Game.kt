@@ -4,11 +4,14 @@ import pt.isel.canvas.BLACK
 import pt.isel.canvas.Canvas
 import pt.isel.canvas.ESCAPE_CODE
 import pt.isel.canvas.WHITE
+import kotlin.math.abs
+import kotlin.math.sign
 
 const val WIDTH = BRICK_WIDTH * 13
 const val HEIGHT = 600
 const val BACKGROUND_COLOR = BLACK
 const val TIME_TICK_MLS = 10
+const val KEY_S_CODE = 83
 
 enum class Collision {
     HORIZONTAL,
@@ -38,25 +41,59 @@ fun gameStart() {
 
     arena.onTimeProgress(period = TIME_TICK_MLS) {
         arena.erase()
-        val bricks = clearBrokenBricks(game.bricks, game.balls)
-        val points = sumPoints(bricks)
-        val updatedBalls = handleGameBallsBehaviour(balls = game.balls, racket = game.racket, bricks = game.bricks)
-
-        val filteredBricks = bricks.filter { !it.isBroken() }
-        if (!game.balls.isEmpty() && updatedBalls.isEmpty()) arena.close()
-
-        game = game.copy(bricks = filteredBricks, balls = updatedBalls, points = game.points + points)
+        game = game.progressGame()
 
         drawGame(game)
     }
 
     arena.onMouseMove { me ->
-        game = game.copy(racket = game.racket.moveTo(to = me.x))
+        game = adjustHorizontalCordForStuckBall(game, me.x)
+    }
+
+    arena.onMouseDown { me ->
+        if (me.down) {
+            game = unstuckBalls(game)
+        }
     }
 
     arena.onKeyPressed {
         if (it.code == ESCAPE_CODE) arena.close()
+        if (it.code == KEY_S_CODE) {
+            game = game.copy(racket = game.racket.toggleStickiness())
+            println("sticky ${game.racket.sticky}")
+        }
     }
+}
+
+fun unstuckBalls(game: Game) = game.copy(balls = game.balls.map {
+    if (it.stuck) {
+        it.copy(stuck = false)
+    } else it
+})
+
+
+fun adjustHorizontalCordForStuckBall(game: Game, mouseX: Int): Game {
+    val updatedRacket = game.racket.moveTo(to = mouseX)
+    val newBalls = game.balls.map {
+        if (it.stuck) {
+            val relativeX = it.x - game.racket.x
+            val newX = updatedRacket.x + relativeX
+            it.copy(x = newX)
+        } else it
+    }
+
+    return game.copy(balls = newBalls, racket = updatedRacket)
+}
+
+fun Game.progressGame(): Game {
+    val bricks = clearBrokenBricks(this.bricks, this.balls)
+    val points = sumPoints(bricks)
+    val updatedBalls = handleGameBallsBehaviour(balls = this.balls, racket = this.racket, bricks = this.bricks)
+
+    val filteredBricks = bricks.filter { !it.isBroken() }
+    if (!this.balls.isEmpty() && updatedBalls.isEmpty()) arena.close()
+
+    return copy(bricks = filteredBricks, balls = updatedBalls, points = this.points + points)
 }
 
 fun clearBrokenBricks(bricks: List<Brick>, balls: List<Ball>): List<Brick> {

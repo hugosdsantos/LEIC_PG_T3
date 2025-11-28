@@ -18,7 +18,11 @@ const val RACKET_DEFAULT_Y_CORD = 540
 const val RACKET_STARTING_POS_X = (WIDTH / 2) - (RACKET_WIDTH / 2)
 const val RACKET_X_CORD = RACKET_STARTING_POS_X
 
-data class Racket(val x: Int = RACKET_X_CORD, val y: Int = RACKET_DEFAULT_Y_CORD)
+data class Racket(
+    val x: Int = RACKET_X_CORD,
+    val y: Int = RACKET_DEFAULT_Y_CORD,
+    val sticky: Boolean = true
+)
 
 fun drawRacketBottomLayer(racket: Racket) {
     arena.drawRect(
@@ -115,5 +119,8 @@ fun checkRacketCollisionPosition(ball: Ball, racket: Racket) = when {
 
     else -> 0
 }
+
+fun Racket.toggleStickiness() = this.copy(sticky = !this.sticky)
+
 
 

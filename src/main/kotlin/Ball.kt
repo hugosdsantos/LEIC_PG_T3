@@ -11,7 +11,13 @@ const val BALL_COLOR = CYAN
 const val MAX_DELTA_X = 6
 const val MAX_DELTA_Y = 4
 
-data class Ball(val x: Int = 0, val y: Int = 0, val deltaX: Int = 0, val deltaY: Int = 0)
+data class Ball(
+    val x: Int = 0,
+    val y: Int = 0,
+    val deltaX: Int = 0,
+    val deltaY: Int = 0,
+    val stuck: Boolean = false
+)
 
 /*
 * Gera uma nova bola com movimentos horizontais e com velocidades verticais diferentes.
@@ -51,7 +57,7 @@ fun Ball.checkBricksCollision(bricks: List<Brick>): Collision {
     for (brick in bricks) {
         val res = checkBrickCollision(this, brick)
         if (res != Collision.NONE) {
-                println("$res -> $this -> $brick")
+            println("$res -> $this -> $brick")
             return res
         }
     }
@@ -75,7 +81,7 @@ fun Ball.isCollidingWithBrick(brick: Brick): Collision {
 /*
 * Cria uma bola fazendo uma cópia e atualizando apenas as coords
 * */
-fun Ball.move() = copy(x = this.x + this.deltaX, y = this.y + deltaY)
+fun Ball.move() = if (!this.stuck) copy(x = this.x + this.deltaX, y = this.y + deltaY) else this
 
 /*
 * Verifica se uma bola está em colisão com a arena, tanto na horizontal e vertical
@@ -133,9 +139,7 @@ fun updateBallAfterCollisionRacket(ball: Ball, racket: Racket): Ball {
 
     val newBallDeltaX = ball.adjustDirectionAfterColliding(newDeltaX)
 
-    //println("Ball DeltaX ${ball.deltaX} - NEW deltaX $newDeltaX, DELTA after adjustment $newBallDeltaX, BATEU EM ${ball.x - racket.x} ")
-
-    return ball.copy(deltaX = newBallDeltaX, deltaY = newDeltaY)
+    return ball.copy(deltaX = newBallDeltaX, deltaY = newDeltaY, stuck = racket.sticky)
 }
 
 /*
