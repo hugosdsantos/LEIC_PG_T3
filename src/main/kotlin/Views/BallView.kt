@@ -4,9 +4,6 @@ import org.example.Models.BALL_COLOR
 import org.example.Models.BALL_RADIUS
 import org.example.Models.Ball
 import org.example.Models.arena
-import pt.isel.canvas.CYAN
-import kotlin.collections.forEach
-import kotlin.math.sign
 
 
 /*

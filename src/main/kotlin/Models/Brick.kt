@@ -16,9 +16,6 @@ const val SILVER_COLOR = 0xC0C0C0
 const val GOLD_COLOR = 0xDAA520
 const val BRICK_STROKE_OFFSET_ADJUSTMENT = 2
 
-const val BRICK_HORIZONTAL_DETECTION_OFFSET = MAX_DELTA_X
-const val BRICK_VERTICAL_DETECTION_OFFSET = MAX_DELTA_Y
-
 enum class BrickType(val points: Int, val hits: Int, val color: Int) {
     YELLOW(points = 9, hits = SINGLE_HIT, color = pt.isel.canvas.YELLOW),
     MAGENTA(points = 8, hits = SINGLE_HIT, color = pt.isel.canvas.MAGENTA),

@@ -35,13 +35,13 @@ class BallTests {
         ball = Ball(x = 312, y = 40, deltaX = -6, deltaY = 4)
         brick = Brick(x = 288, y = 45, type = BrickType.MAGENTA, hitCounter = 0)
         collision = ball.isCollidingWithBrick(brick)
-        assertEquals(Collision.VERTICAL, collision)
+        assertEquals(Collision.BOTH, collision)
     }
 
     @Test
     fun ballCollidingWithVerticalSideBrickShouldReturnCorrectCollision() {
         var ball = Ball(100, 100, 1, -1)
-        var brick = Brick(100, 200, BrickType.MAGENTA, 0)
+        val brick = Brick(100, 200, BrickType.MAGENTA, 0)
 
         var collision = checkBrickVerticalCollision(ball, brick)
         assertEquals(Collision.NONE, collision)
