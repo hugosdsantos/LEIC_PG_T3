@@ -1,6 +1,6 @@
-package org.example.Models
+package org.example.models
 
-import org.example.Views.gameStart
+import org.example.views.gameStart
 import pt.isel.canvas.*
 
 enum class ENVIRONMENT {

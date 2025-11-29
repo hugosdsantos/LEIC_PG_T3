@@ -1,14 +1,14 @@
-package org.example.Views
+package org.example.views
 
-import org.example.Models.RACKET_CENTRAL_ZONE
-import org.example.Models.RACKET_EDGE_ZONE
-import org.example.Models.RACKET_HEIGHT
-import org.example.Models.RACKET_MIDDLE_EDGE_COLOR
-import org.example.Models.RACKET_MIDDLE_ZONE
-import org.example.Models.RACKET_TOP_LAYER_HEIGHT
-import org.example.Models.RACKET_WIDTH
-import org.example.Models.Racket
-import org.example.Models.arena
+import org.example.models.RACKET_CENTRAL_ZONE
+import org.example.models.RACKET_EDGE_ZONE
+import org.example.models.RACKET_HEIGHT
+import org.example.models.RACKET_MIDDLE_EDGE_COLOR
+import org.example.models.RACKET_MIDDLE_ZONE
+import org.example.models.RACKET_TOP_LAYER_HEIGHT
+import org.example.models.RACKET_WIDTH
+import org.example.models.Racket
+import org.example.models.arena
 import pt.isel.canvas.RED
 import pt.isel.canvas.WHITE
 

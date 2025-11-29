@@ -1,9 +1,9 @@
-package org.example.Views
+package org.example.views
 
-import org.example.Models.BALL_COLOR
-import org.example.Models.BALL_RADIUS
-import org.example.Models.Ball
-import org.example.Models.arena
+import org.example.models.BALL_COLOR
+import org.example.models.BALL_RADIUS
+import org.example.models.Ball
+import org.example.models.arena
 
 
 /*

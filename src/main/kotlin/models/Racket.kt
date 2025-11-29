@@ -1,5 +1,4 @@
-package org.example.Models
-
+package org.example.models
 
 const val RACKET_CENTRAL_ZONE = 10
 const val RACKET_EDGE_ZONE = 10

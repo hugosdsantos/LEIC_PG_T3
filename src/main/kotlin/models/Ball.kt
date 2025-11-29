@@ -1,8 +1,7 @@
-package org.example.Models
+package org.example.models
 
 import pt.isel.canvas.CYAN
 import kotlin.math.sign
-
 
 const val BALL_COUNT_FONTSIZE = 30
 const val BALL_COUNTER_YCORD = 585

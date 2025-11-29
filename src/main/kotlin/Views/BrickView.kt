@@ -1,10 +1,10 @@
-package org.example.Views
+package org.example.views
 
-import org.example.Models.BRICK_HEIGHT
-import org.example.Models.BRICK_STROKE_OFFSET_ADJUSTMENT
-import org.example.Models.BRICK_WIDTH
-import org.example.Models.Brick
-import org.example.Models.arena
+import org.example.models.BRICK_HEIGHT
+import org.example.models.BRICK_STROKE_OFFSET_ADJUSTMENT
+import org.example.models.BRICK_WIDTH
+import org.example.models.Brick
+import org.example.models.arena
 import pt.isel.canvas.BLACK
 
 

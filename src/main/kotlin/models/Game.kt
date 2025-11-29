@@ -1,4 +1,4 @@
-package org.example.Models
+package org.example.models
 
 import pt.isel.canvas.BLACK
 import pt.isel.canvas.Canvas
@@ -6,6 +6,8 @@ import pt.isel.canvas.Canvas
 const val WIDTH = BRICK_WIDTH * 13
 const val HEIGHT = 600
 const val BACKGROUND_COLOR = BLACK
+const val LIVES_Y_POSITION = HEIGHT - 20
+const val LIVES_X_SPACE = (BALL_RADIUS * 3)
 const val TIME_TICK_MLS = 10
 const val KEY_S_CODE = 83
 
@@ -110,12 +112,7 @@ fun checkAndUpdateBallMovementAfterCollision(ball: Ball, racket: Racket, bricks:
     )
 
 fun generateLives(lives: Int): List<Ball> {
-    var initialX = BALL_RADIUS * 2
-    var livesList: List<Ball> = emptyList()
-    for (live in 0 until lives) {
-        val newBall = Ball(x = initialX, y = HEIGHT - 20, 0, 0, true)
-        initialX += BALL_RADIUS * 3
-        livesList = livesList + newBall
+    return (1..lives).map {
+        Ball(x = it * LIVES_X_SPACE, y = LIVES_Y_POSITION, stuck = true)
     }
-    return livesList
 }
