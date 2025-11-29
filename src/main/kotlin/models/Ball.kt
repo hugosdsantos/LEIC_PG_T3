@@ -9,13 +9,14 @@ const val BALL_RADIUS = 7
 const val BALL_COLOR = CYAN
 const val MAX_DELTA_X = 6
 const val MAX_DELTA_Y = 4
+const val INITIAL_DELTA_Y = 2
 
 data class Ball(
     val x: Int = 0,
     val y: Int = 0,
     val deltaX: Int = 0,
     val deltaY: Int = 0,
-    val stuck: Boolean = false
+    val stuck: Boolean = true
 )
 
 /*
@@ -24,10 +25,10 @@ data class Ball(
 * */
 fun generateRandomBall(): Ball {
     val xCord = WIDTH / 2
-    val yCord = HEIGHT - 30
+    val yCord = RACKET_DEFAULT_Y_CORD - BALL_RADIUS
 
     val xDelta = 0
-    val yDelta = MAX_DELTA_Y
+    val yDelta = INITIAL_DELTA_Y
 
 
     return Ball(x = xCord, y = yCord, deltaX = xDelta, deltaY = -yDelta)
@@ -88,7 +89,8 @@ fun Ball.move() = if (!this.stuck) copy(x = this.x + this.deltaX, y = this.y + d
 * */
 fun Ball.isCollidingWithArea() = when {
     this.x - BALL_RADIUS <= 0 || this.x + BALL_RADIUS >= WIDTH -> Collision.HORIZONTAL
-    this.y - BALL_RADIUS <= 0 || this.y + BALL_RADIUS >= HEIGHT // && this.deltaY.sign == DIRECTIONS.UP.value
+    this.y - BALL_RADIUS <= 0 || (this.y + BALL_RADIUS >= HEIGHT &&
+            (runningENVIRONMENT == ENVIRONMENT.DEBUG && this.deltaY.sign != DIRECTIONS.UP.value))// && this.deltaY.sign == DIRECTIONS.UP.value
         -> Collision.VERTICAL
 
     else -> Collision.NONE
