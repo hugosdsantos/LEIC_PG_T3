@@ -1,5 +1,8 @@
 package org.example.models
 
+data class BricksRow(val bricks: List<BrickType>)
+data class BricksColumn(val rows: List<BricksRow>)
+
 val singleHitBrickTypes = BrickType.entries.filter { it.hits == SINGLE_HIT }
 
 val allColors: BricksColumn = BricksColumn(singleHitBrickTypes.map { BricksRow(listOf(it, it, it)) })
@@ -77,12 +80,12 @@ fun createInitialBricksLayout(layout: List<BricksColumn>): List<Brick> {
             brickY += BRICK_HEIGHT
             brickX = initialX
         }
-        initialX += BRICK_WIDTH * (columnSize)
+        initialX += BRICK_WIDTH * (columnSize )
         brickX = initialX
         brickY = TopMarginBricks
     }
 
     lista = generateGifsInRandomBricks(bricks = lista)
-    return lista
+    return lista.excludingEmpty()
 }
 

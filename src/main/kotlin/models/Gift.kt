@@ -1,24 +1,70 @@
 package org.example.models
 
-enum class GiftType(val letter: String){
-    EXTENDED("E"),
-    BALLS("B"),
-    SLOW("S"),
-    FAST("F"),
-    GLUE("G"),
-    CANCEL("C")
+import org.example.views.GIFT_CIRCLE_RADIUS
+import org.example.views.RACKET_HEIGHT
+import pt.isel.canvas.BLUE
+import pt.isel.canvas.CYAN
+import pt.isel.canvas.GREEN
+import pt.isel.canvas.MAGENTA
+import pt.isel.canvas.YELLOW
+
+enum class GiftType(val letter: String, val color: Int){
+    EXTENDED(letter = "E", color = GREEN),
+    BALLS(letter = "B", color = YELLOW),
+    SLOW(letter = "S", color = BLUE),
+    FAST(letter = "F", color = CYAN),
+    GLUE(letter = "G", color = MAGENTA),
+    CANCEL(letter = "C", color = ORANGE_COLOR)
 }
 
 data class Gift(val x: Int = 0, val y: Int = 0, val deltaY: Int = 1, val type: GiftType, val active: Boolean = false)
 
+fun Gift.isOutOfBounds() = this.y > HEIGHT
+
+fun Gift.isCollidingWithRacket(racket: Racket) =
+        (this.x + GIFT_CIRCLE_RADIUS in racket.x .. racket.x + racket.width) &&
+        (this.y + GIFT_CIRCLE_RADIUS in racket.y .. racket.y + RACKET_HEIGHT)
+
+
+
 fun generateGifsInRandomBricks(bricks: List<Brick>) :List<Brick>{
-    val availableGifts = GiftType.entries + GiftType.entries + GiftType.CANCEL + GiftType.CANCEL + GiftType.CANCEL + GiftType.CANCEL + GiftType.CANCEL
+    val availableGifts = GiftType.entries + GiftType.entries + GiftType.entries + GiftType.entries + GiftType.CANCEL + GiftType.CANCEL + GiftType.CANCEL + GiftType.CANCEL + GiftType.CANCEL
     val bricksMutableList = bricks.toMutableList()
 
     availableGifts.forEach {
         val randomIndex = (0 until bricks.size).random()
-        bricksMutableList[randomIndex] = bricks[randomIndex].copy(gift = Gift(type = it))
+        val randomBrick = bricks[randomIndex]
+        bricksMutableList[randomIndex] = randomBrick.copy(gift = Gift(x = randomBrick.x, y = randomBrick.y, deltaY = 2, type = it))
     }
 
     return bricksMutableList.toList()
 }
+
+fun chooseGiftAction(gift: Gift, game: Game):Game {
+    val giftedRacket = when (gift.type) {
+        GiftType.EXTENDED -> giftExtendedRacket(game.racket)
+        GiftType.GLUE -> game.racket.setExtended()
+        else -> game.racket
+    }
+    val giftedBalls = when (gift.type) {
+        GiftType.BALLS -> giftDuplicateBall(game.balls)
+        GiftType.FAST -> giftFastBalls(game.balls)
+        GiftType.SLOW -> giftSlowBalls(game.balls)
+        else -> game.balls
+    }
+
+    return game.copy(racket = giftedRacket, balls = giftedBalls)
+}
+
+fun giftDuplicateBall(balls: List<Ball>):List<Ball> {
+    var newBallsList: List<Ball> = balls
+
+    for (ball in balls){
+        newBallsList = newBallsList + generateNewBallFromPosition(xCord = ball.x, yCord = ball.y)
+    }
+    return newBallsList
+}
+
+fun giftSlowBalls(balls: List<Ball>) = balls.map { it.slowVelocity() }
+fun giftFastBalls(balls: List<Ball>) = balls.map { it.upVelocity() }
+fun giftExtendedRacket(racket: Racket) = racket.toggleExtendiness()

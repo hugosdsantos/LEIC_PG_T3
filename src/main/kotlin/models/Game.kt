@@ -12,6 +12,10 @@ const val LIVES_Y_POSITION = HEIGHT - 20
 const val LIVES_X_SPACE = (BALL_RADIUS * 3)
 const val TIME_TICK_MLS = 10
 const val KEY_S_CODE = 83
+const val KEY_D_CODE = 68
+const val KEY_F_CODE = 70
+const val KEY_X_CODE = 88
+const val KEY_E_CODE = 69
 
 enum class Collision {
     HORIZONTAL,
@@ -33,12 +37,13 @@ data class Game(
     val bricks: List<Brick> = emptyList(),
     val points: Int = 0,
     val lives: Int = 2,
-    val gifs: List<Gift> = listOf()
+    val giftsOnScreen: List<Gift> = listOf(),
+    val activeGifts: List<Gift> = listOf()
 )
 
 val arena = Canvas(WIDTH, HEIGHT, BACKGROUND_COLOR)
 
-fun Game.loseLife() = copy(lives=lives-1)
+fun Game.loseLife() = copy(lives = lives - 1)
 
 fun Game.newBall() = copy(balls = listOf(generateNewBall(this.racket)))
 
@@ -60,13 +65,10 @@ fun adjustHorizontalCordForStuckBall(game: Game, mouseX: Int): Game {
 
     return game.copy(balls = newBalls, racket = updatedRacket)
 }
-fun clearBrokenBricks(bricks: List<Brick>, balls: List<Ball>): List<Brick> {
+fun addHitsToCollidedBricks(bricks: List<Brick>, balls: List<Ball>): List<Brick> {
     val newBricks = bricks.map { brick ->
         if (balls.any {
-                checkBrickCollision(
-                    it,
-                    brick
-                ) != Collision.NONE
+                checkBrickCollision(it,brick) != Collision.NONE
             })
             brick.addHit()
         else
@@ -78,7 +80,7 @@ fun clearBrokenBricks(bricks: List<Brick>, balls: List<Ball>): List<Brick> {
 fun sumPoints(bricks: List<Brick>) =
     bricks
         .filter { it.hitCounter > 0 }
-        .fold(0) { sum, brick -> sum + brick.type.points * brick.hitCounter }
+        .fold(initial = 0) { sum, brick -> sum + brick.type.points * brick.hitCounter }
 
 /*
 * A cada step do jogo, remove as bolas fora de jogo, verifica as colisões e atualiza os movimentos das bolas para serem desenhadas novamente.
@@ -115,8 +117,6 @@ fun checkAndUpdateBallMovementAfterCollision(ball: Ball, racket: Racket, bricks:
         brickCollision = ball.checkBricksCollision(bricks)
     )
 
-fun generateLives(lives: Int): List<Ball> {
-    return (1..lives).map {
-        Ball(x = it * LIVES_X_SPACE, y = LIVES_Y_POSITION, stuck = true)
-    }
+fun generateLives(lives: Int): List<Ball> = (1..lives).map {
+    Ball(x = it * LIVES_X_SPACE, y = LIVES_Y_POSITION, stuck = true)
 }

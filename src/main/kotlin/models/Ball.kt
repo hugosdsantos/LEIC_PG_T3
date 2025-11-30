@@ -2,7 +2,11 @@ package org.example.models
 
 import org.example.ENVIRONMENT
 import org.example.runningENVIRONMENT
+import org.example.views.RACKET_DEFAULT_Y_CORD
+import org.example.views.RACKET_HEIGHT
 import pt.isel.canvas.CYAN
+import kotlin.math.max
+import kotlin.math.min
 import kotlin.math.sign
 
 const val BALL_COUNT_FONTSIZE = 30
@@ -12,12 +16,16 @@ const val BALL_COLOR = CYAN
 const val MAX_DELTA_X = 6
 const val MAX_DELTA_Y = 4
 const val INITIAL_DELTA_Y = 2
+const val BALL_MAX_WEIGHT = 2.0
+const val BALL_MIN_WEIGHT = 0.4
+const val BALL_MAX_WEIGHT_DELTA = 0.2
 
 data class Ball(
     val x: Int = 0,
     val y: Int = 0,
     val deltaX: Int = 0,
     val deltaY: Int = 0,
+    val weight: Double = 1.0,
     val stuck: Boolean = true
 )
 
@@ -26,7 +34,7 @@ data class Ball(
 * A nova bola está sempre a movimentar-se para cima
 * */
 fun generateNewBall(racket: Racket): Ball {
-    val xCord = racket.x + (RACKET_WIDTH / 2)
+    val xCord = racket.x + (racket.width / 2)
     val yCord = RACKET_DEFAULT_Y_CORD - BALL_RADIUS
 
     val xDelta = 0
@@ -36,13 +44,39 @@ fun generateNewBall(racket: Racket): Ball {
     return Ball(x = xCord, y = yCord, deltaX = xDelta, deltaY = -yDelta)
 }
 
+fun Ball.slowVelocity() = copy(weight = max(weight - BALL_MAX_WEIGHT_DELTA, BALL_MIN_WEIGHT))
+fun Ball.upVelocity() = copy(weight = min(weight + BALL_MAX_WEIGHT_DELTA, BALL_MAX_WEIGHT))
+
+/*
+* Gera uma nova bola com movimentos horizontais e com velocidades verticais diferentes.
+* A nova bola está sempre a movimentar-se para cima
+* */
+fun generateNewBallFromPosition(xCord: Int, yCord: Int): Ball {
+    val xDelta = (-MAX_DELTA_X .. MAX_DELTA_X).random()
+    val yDelta = (-MAX_DELTA_Y .. MAX_DELTA_Y).random()
+
+
+    return Ball(x = xCord, y = yCord, deltaX = xDelta, deltaY = -yDelta, stuck = false)
+}
+
+
+/*
+* Cria uma bola fazendo uma cópia e atualizando apenas as coords
+* */
+fun Ball.move() = if (!this.stuck) copy(x = ballMovementCalc(x, deltaX, weight), y = ballMovementCalc(y, deltaY, weight)) else this
+
+fun ballMovementCalc(n: Int, delta: Int, weight: Double) =
+    (n + (delta * weight)).toInt()
+
+
+
 /*
 * Deteta se ha colisão com a racket retorna um enumerado conforme a colisão detetada
 * */
 fun Ball.isCollidingWithRacket(racket: Racket): Collision {
     val horizontalCollision = (
-            this.x + BALL_RADIUS in racket.x..(racket.x + RACKET_WIDTH) ||
-                    this.x - BALL_RADIUS in racket.x..(racket.x + RACKET_WIDTH)
+            this.x + BALL_RADIUS in racket.x..(racket.x + racket.width) ||
+                    this.x - BALL_RADIUS in racket.x..(racket.x + racket.width)
             )
     val verticalCollision = (this.y + BALL_RADIUS) in racket.y..(racket.y + RACKET_HEIGHT)
 
@@ -79,11 +113,6 @@ fun Ball.isCollidingWithBrick(brick: Brick): Collision {
         else -> Collision.NONE
     }
 }
-
-/*
-* Cria uma bola fazendo uma cópia e atualizando apenas as coords
-* */
-fun Ball.move() = if (!this.stuck) copy(x = this.x + this.deltaX, y = this.y + deltaY) else this
 
 /*
 * Verifica se uma bola está em colisão com a arena, tanto na horizontal e vertical

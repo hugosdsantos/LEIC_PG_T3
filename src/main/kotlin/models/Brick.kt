@@ -28,14 +28,12 @@ enum class BrickType(val points: Int, val hits: Int, val color: Int) {
     WHITE(points = 1, hits = SINGLE_HIT, color = pt.isel.canvas.WHITE),
     SILVER(points = 0, hits = DOUBLE_HIT, color = SILVER_COLOR),
     GOLD(points = 0, hits = INDESTRUCTIBLE, color = GOLD_COLOR),
-    EMPTY(points = 0, hits = 0, color = BLACK),
+    EMPTY(points = 0, hits = INDESTRUCTIBLE, color = BLACK),
 }
 
 data class Brick(val x: Int, val y: Int, val type: BrickType, val hitCounter: Int = 0,val gift: Gift? = null)
 
-data class BricksRow(val bricks: List<BrickType>)
-
-data class BricksColumn(val rows: List<BricksRow>)
+fun List<Brick>.excludingEmpty() = this.filter { it.type != BrickType.EMPTY }
 
 
 fun checkBrickHorizontalCollision(ball: Ball, brick: Brick): Collision {
