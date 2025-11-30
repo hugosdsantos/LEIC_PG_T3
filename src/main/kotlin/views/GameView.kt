@@ -8,7 +8,7 @@ import pt.isel.canvas.YELLOW
 
 fun gameStart() {
     val racket = Racket()
-    var game = Game(racket = racket,bricks = generateInitialBricksLayout(portugalBricksLayout), balls = listOf(generateNewBall(racket)))
+    var game = Game(racket = racket, bricks = createInitialBricksLayout(portugalBricksLayout), balls = listOf(generateNewBall(racket)))
 
     arena.onTimeProgress(period = TIME_TICK_MLS) {
         arena.erase()

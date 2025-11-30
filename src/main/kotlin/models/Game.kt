@@ -32,7 +32,8 @@ data class Game(
     val racket: Racket = Racket(),
     val bricks: List<Brick> = emptyList(),
     val points: Int = 0,
-    val lives: Int = 2
+    val lives: Int = 2,
+    val gifs: List<Gift> = listOf()
 )
 
 val arena = Canvas(WIDTH, HEIGHT, BACKGROUND_COLOR)

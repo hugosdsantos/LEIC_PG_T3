@@ -31,7 +31,7 @@ enum class BrickType(val points: Int, val hits: Int, val color: Int) {
     EMPTY(points = 0, hits = 0, color = BLACK),
 }
 
-data class Brick(val x: Int, val y: Int, val type: BrickType, val hitCounter: Int = 0)
+data class Brick(val x: Int, val y: Int, val type: BrickType, val hitCounter: Int = 0,val gift: Gift? = null)
 
 data class BricksRow(val bricks: List<BrickType>)
 

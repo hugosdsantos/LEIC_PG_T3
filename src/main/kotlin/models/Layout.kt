@@ -1,8 +1,8 @@
 package org.example.models
 
-val basicTypes = BrickType.entries.filter { it.hits == SINGLE_HIT }
+val singleHitBrickTypes = BrickType.entries.filter { it.hits == SINGLE_HIT }
 
-val allColors: BricksColumn = BricksColumn(basicTypes.map { BricksRow(listOf(it, it, it)) })
+val allColors: BricksColumn = BricksColumn(singleHitBrickTypes.map { BricksRow(listOf(it, it, it)) })
 val middleColors: BricksColumn = BricksColumn(
     rows = listOf(
         BricksRow(bricks = listOf(BrickType.WHITE, BrickType.GOLD, BrickType.WHITE)),
@@ -59,7 +59,7 @@ fun generateWallBricks(): List<Brick> {
     return lista
 }
 
-fun generateInitialBricksLayout(layout: List<BricksColumn>): List<Brick> {
+fun createInitialBricksLayout(layout: List<BricksColumn>): List<Brick> {
     var lista: List<Brick> = emptyList()
     var brickY = TopMarginBricks
     var brickX = 0
@@ -69,18 +69,20 @@ fun generateInitialBricksLayout(layout: List<BricksColumn>): List<Brick> {
     for (column in layout) {
         column.rows.forEach {
             columnSize = it.bricks.size
+
             it.bricks.forEach {
                 brickX += BRICK_WIDTH
-                lista = lista + Brick(brickX, brickY, it)
+                lista = lista + Brick(x = brickX, y = brickY, type = it)
             }
             brickY += BRICK_HEIGHT
             brickX = initialX
         }
-        initialX += BRICK_WIDTH * (columnSize )
+        initialX += BRICK_WIDTH * (columnSize)
         brickX = initialX
         brickY = TopMarginBricks
     }
 
+    lista = generateGifsInRandomBricks(bricks = lista)
     return lista
 }
 

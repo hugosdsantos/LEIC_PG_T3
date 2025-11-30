@@ -6,6 +6,7 @@ import org.example.models.BRICK_WIDTH
 import org.example.models.Brick
 import org.example.models.arena
 import pt.isel.canvas.BLACK
+import pt.isel.canvas.WHITE
 
 
 fun drawBricks(bricks: List<Brick>) {
@@ -25,5 +26,16 @@ fun drawBricks(bricks: List<Brick>) {
             color = BLACK,
             thickness = 2
         )
+
+        if(it.gift != null){
+            arena.drawText(
+                x = it.x + BRICK_WIDTH / 2,
+                y = it.y + BRICK_HEIGHT - 4,
+                txt = it.gift.type.letter,
+                color = BLACK,
+                fontSize = 10
+            )
+        }
+
     }
 }
