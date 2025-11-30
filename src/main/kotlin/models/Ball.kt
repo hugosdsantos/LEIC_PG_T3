@@ -1,5 +1,7 @@
 package org.example.models
 
+import org.example.ENVIRONMENT
+import org.example.runningENVIRONMENT
 import pt.isel.canvas.CYAN
 import kotlin.math.sign
 
@@ -23,8 +25,8 @@ data class Ball(
 * Gera uma nova bola com movimentos horizontais e com velocidades verticais diferentes.
 * A nova bola está sempre a movimentar-se para cima
 * */
-fun generateRandomBall(): Ball {
-    val xCord = WIDTH / 2
+fun generateNewBall(racket: Racket): Ball {
+    val xCord = racket.x + (RACKET_WIDTH / 2)
     val yCord = RACKET_DEFAULT_Y_CORD - BALL_RADIUS
 
     val xDelta = 0

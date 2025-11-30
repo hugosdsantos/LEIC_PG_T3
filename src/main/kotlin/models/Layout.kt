@@ -1,6 +1,7 @@
 package org.example.models
 
 val basicTypes = BrickType.entries.filter { it.hits == SINGLE_HIT }
+
 val allColors: BricksColumn = BricksColumn(basicTypes.map { BricksRow(listOf(it, it, it)) })
 val middleColors: BricksColumn = BricksColumn(
     rows = listOf(
@@ -14,10 +15,30 @@ val middleColors: BricksColumn = BricksColumn(
         BricksRow(bricks = listOf(BrickType.SILVER, BrickType.SILVER, BrickType.SILVER)),
     )
 )
+
+val allRedBricks: BricksColumn = BricksColumn((0 until 10).map { BricksRow(listOf(BrickType.RED, BrickType.RED, BrickType.RED)) })
+val allYellowBricks: BricksColumn = BricksColumn((0 until 10).mapIndexed {
+    index, _ ->
+    when (index) {
+        in 0 until 2 -> BricksRow(listOf(BrickType.RED, BrickType.RED, BrickType.EMPTY, BrickType.GREEN, BrickType.GREEN))
+        in 3 until 7 -> BricksRow(listOf(BrickType.EMPTY, BrickType.YELLOW, BrickType.YELLOW, BrickType.YELLOW, BrickType.EMPTY))
+        in 8 until 10 -> BricksRow(listOf(BrickType.RED, BrickType.RED, BrickType.EMPTY, BrickType.GREEN, BrickType.GREEN))
+        else -> BricksRow(listOf(BrickType.EMPTY))
+    }
+})
+
+val allGreenBricks: BricksColumn = BricksColumn((0 until 10).map { BricksRow(listOf(BrickType.GREEN, BrickType.GREEN, BrickType.GREEN)) })
+
 val bricksLayout: List<BricksColumn> = listOf(
     allColors,
     middleColors,
     allColors
+)
+
+val portugalBricksLayout: List<BricksColumn> = listOf(
+    allRedBricks,
+    allYellowBricks,
+    allGreenBricks,
 )
 
 val singleBricksLayout: List<BricksColumn> = listOf(
@@ -40,8 +61,8 @@ fun generateWallBricks(): List<Brick> {
 
 fun generateInitialBricksLayout(layout: List<BricksColumn>): List<Brick> {
     var lista: List<Brick> = emptyList()
-    var y = TopMarginBricks
-    var x = 0
+    var brickY = TopMarginBricks
+    var brickX = 0
     var initialX = 0
     var columnSize = 0
 
@@ -49,15 +70,15 @@ fun generateInitialBricksLayout(layout: List<BricksColumn>): List<Brick> {
         column.rows.forEach {
             columnSize = it.bricks.size
             it.bricks.forEach {
-                x += BRICK_WIDTH
-                lista = lista + Brick(x, y, it)
+                brickX += BRICK_WIDTH
+                lista = lista + Brick(brickX, brickY, it)
             }
-            y += BRICK_HEIGHT
-            x = initialX
+            brickY += BRICK_HEIGHT
+            brickX = initialX
         }
-        initialX += BRICK_WIDTH * (columnSize + 1)
-        x = initialX
-        y = TopMarginBricks
+        initialX += BRICK_WIDTH * (columnSize )
+        brickX = initialX
+        brickY = TopMarginBricks
     }
 
     return lista

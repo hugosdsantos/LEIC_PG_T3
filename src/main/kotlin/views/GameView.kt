@@ -1,28 +1,34 @@
 package org.example.views
 
 import org.example.models.*
-import pt.isel.canvas.BLACK
 import pt.isel.canvas.ESCAPE_CODE
 import pt.isel.canvas.WHITE
-
+import pt.isel.canvas.YELLOW
 
 
 fun gameStart() {
-    var game = Game(bricks = generateInitialBricksLayout(bricksLayout), balls = listOf(generateRandomBall()))
+    val racket = Racket()
+    var game = Game(racket = racket,bricks = generateInitialBricksLayout(portugalBricksLayout), balls = listOf(generateNewBall(racket)))
 
     arena.onTimeProgress(period = TIME_TICK_MLS) {
         arena.erase()
-        game = game.progressGame()
+
+        if(!game.isGameOver()) game = game.progressGame() else drawFinishText()
         drawGame(game)
     }
 
     arena.onMouseMove { me ->
-        game = adjustHorizontalCordForStuckBall(game, me.x)
+        game = adjustHorizontalCordForStuckBall(game, mouseX = me.x)
     }
 
     arena.onMouseDown { me ->
         if (me.down) {
-            game = unstuckBalls(game)
+            if(game.balls.isEmpty() &&  game.lives > 0){
+                game = game.newBall()
+                game = game.loseLife()
+            }else{
+                game = unstuckBalls(game)
+            }
         }
     }
 
@@ -42,10 +48,16 @@ fun Game.progressGame(): Game {
     val updatedBalls = handleGameBallsBehaviour(balls = this.balls, racket = this.racket, bricks = this.bricks)
 
     val filteredBricks = bricks.filter { !it.isBroken() }
-    if (!this.balls.isEmpty() && updatedBalls.isEmpty()) arena.close()
 
     return copy(bricks = filteredBricks, balls = updatedBalls, points = this.points + points)
 }
+
+/*
+* If there are not bricks, other than INDESTRUCTIBLE, left than the game ends
+* */
+fun Game.isGameOver() = (
+            this.bricks.filter { it.type != BrickType.GOLD }.isEmpty()
+        ) || (this.balls.isEmpty() && this.lives == 0)
 
 /*
 * Desenha no canvas o número de pontos adquiridos durante o jogo no momento*/
@@ -72,4 +84,8 @@ fun drawGame(game: Game) {
 
 fun drawLives(lives: Int) {
     drawBalls(generateLives(lives))
+}
+
+fun drawFinishText(){
+    arena.drawText(WIDTH-100,LIVES_Y_POSITION, "FINISHED!", YELLOW,16)
 }

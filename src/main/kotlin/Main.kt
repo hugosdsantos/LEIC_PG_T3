@@ -1,4 +1,4 @@
-package org.example.models
+package org.example
 
 import org.example.views.gameStart
 import pt.isel.canvas.*
@@ -8,7 +8,7 @@ enum class ENVIRONMENT {
     PROD
 }
 
-val runningENVIRONMENT = ENVIRONMENT.DEBUG
+val runningENVIRONMENT = ENVIRONMENT.PROD
 
 fun main() {
     onStart {

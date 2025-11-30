@@ -1,5 +1,7 @@
 package org.example.models
 
+import org.example.ENVIRONMENT
+import org.example.runningENVIRONMENT
 import pt.isel.canvas.BLACK
 import pt.isel.canvas.Canvas
 
@@ -30,10 +32,14 @@ data class Game(
     val racket: Racket = Racket(),
     val bricks: List<Brick> = emptyList(),
     val points: Int = 0,
-    val lives: Int = 5
+    val lives: Int = 2
 )
 
 val arena = Canvas(WIDTH, HEIGHT, BACKGROUND_COLOR)
+
+fun Game.loseLife() = copy(lives=lives-1)
+
+fun Game.newBall() = copy(balls = listOf(generateNewBall(this.racket)))
 
 fun unstuckBalls(game: Game) = game.copy(balls = game.balls.map {
     if (it.stuck) {
@@ -53,8 +59,6 @@ fun adjustHorizontalCordForStuckBall(game: Game, mouseX: Int): Game {
 
     return game.copy(balls = newBalls, racket = updatedRacket)
 }
-
-
 fun clearBrokenBricks(bricks: List<Brick>, balls: List<Ball>): List<Brick> {
     val newBricks = bricks.map { brick ->
         if (balls.any {
@@ -70,7 +74,6 @@ fun clearBrokenBricks(bricks: List<Brick>, balls: List<Ball>): List<Brick> {
     }
     return newBricks
 }
-
 fun sumPoints(bricks: List<Brick>) =
     bricks
         .filter { it.hitCounter > 0 }
