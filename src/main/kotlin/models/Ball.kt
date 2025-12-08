@@ -99,7 +99,7 @@ fun Ball.isCollidingWithRacket(racket: Racket): Collision {
 
 fun Ball.checkBricksCollision(bricks: List<Brick>): Collision {
     for (brick in bricks) {
-        val res = checkBrickCollision(this, brick)
+        val res = this.isCollidingWithBrick(brick)
         if (res != Collision.NONE) {
             println("$res -> $this -> $brick")
             return res
@@ -113,6 +113,8 @@ fun Ball.checkBricksCollision(bricks: List<Brick>): Collision {
 fun Ball.isCollidingWithBrick(brick: Brick): Collision {
     val horCollision = checkBrickHorizontalCollision(ball = this, brick)
     val verCollision = checkBrickVerticalCollision(ball = this, brick)
+
+
 
     return when {
         horCollision != Collision.NONE && verCollision == Collision.NONE -> Collision.HORIZONTAL

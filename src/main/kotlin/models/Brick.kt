@@ -37,12 +37,12 @@ fun List<Brick>.excludingEmpty() = this.filter { it.type != BrickType.EMPTY }
 
 
 fun checkBrickHorizontalCollision(ball: Ball, brick: Brick): Collision {
-    if ((ball.y + BALL_RADIUS + abs(ball.deltaY) in brick.y..brick.y + BRICK_HEIGHT)
-        && (ball.y - BALL_RADIUS - abs(ball.deltaY) in brick.y..brick.y + BRICK_HEIGHT)
+    if ((ball.verticalMovement() + BALL_RADIUS in brick.y..brick.y + BRICK_HEIGHT)
+        || (ball.verticalMovement() - BALL_RADIUS in brick.y..brick.y + BRICK_HEIGHT)
     ) {
-        if (ball.x + BALL_RADIUS + abs(ball.deltaX) in brick.x..brick.x + BRICK_WIDTH) {
+        if (ball.horizontalMovement() + BALL_RADIUS in brick.x..brick.x + BRICK_WIDTH) {
             return Collision.HORIZONTAL
-        } else if (ball.x - BALL_RADIUS - abs(ball.deltaX) in brick.x..brick.x + BRICK_WIDTH) {
+        } else if (ball.horizontalMovement() - BALL_RADIUS in brick.x..brick.x + BRICK_WIDTH) {
             return Collision.HORIZONTAL
         }
     }
@@ -50,12 +50,12 @@ fun checkBrickHorizontalCollision(ball: Ball, brick: Brick): Collision {
 }
 
 fun checkBrickVerticalCollision(ball: Ball, brick: Brick): Collision {
-    if ((ball.x + BALL_RADIUS in brick.x..brick.x + BRICK_WIDTH)
-        && (ball.x - BALL_RADIUS - abs(ball.deltaX) in brick.x..brick.x + BRICK_WIDTH)
+    if ((ball.horizontalMovement() + BALL_RADIUS in brick.x..brick.x + BRICK_WIDTH)
+        || (ball.horizontalMovement() - BALL_RADIUS in brick.x..brick.x + BRICK_WIDTH)
     ) {
-        if (ball.y + BALL_RADIUS + abs(ball.deltaY) in brick.y..brick.y + BRICK_HEIGHT) {
+        if (ball.verticalMovement() + BALL_RADIUS in brick.y..brick.y + BRICK_HEIGHT) {
             return Collision.VERTICAL
-        } else if (ball.y - BALL_RADIUS - abs(ball.deltaY) in brick.y..brick.y + BRICK_HEIGHT) {
+        } else if (ball.verticalMovement() - BALL_RADIUS in brick.y..brick.y + BRICK_HEIGHT) {
             return Collision.VERTICAL
         }
     }

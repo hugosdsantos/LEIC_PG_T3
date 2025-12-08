@@ -10,7 +10,7 @@ fun gameStart() {
     val racket = Racket()
     var game = Game(
         racket = racket,
-        bricks = createInitialBricksLayout(bricksLayout),
+        bricks = createInitialBricksLayout(portugalBricksLayout),
         balls = listOf(generateNewBall(racket))
     )
 
@@ -64,7 +64,7 @@ fun gameStart() {
         }
 
         if (it.code == KEY_C_CODE) {
-            game = giftCancelGifts(game)
+            game = giftCancelEffects(game)
             println("cancel")
         }
 

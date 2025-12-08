@@ -77,7 +77,7 @@ fun adjustHorizontalCordForStuckBall(game: Game, mouseX: Int): Game {
 fun addHitsToCollidedBricks(bricks: List<Brick>, balls: List<Ball>): List<Brick> {
     val newBricks = bricks.map { brick ->
         if (balls.any {
-                checkBrickCollision(it, brick) != Collision.NONE
+                it.isCollidingWithBrick(brick) != Collision.NONE
             })
             brick.addHit()
         else
@@ -192,23 +192,37 @@ fun updateGiftsIconMovement(gifts: List<Gift>) =
     gifts.map { it.copy(y = it.y + it.deltaY) }.filter { !it.isOutOfBounds() }
 
 fun Game.handleActiveGifts(): Game {
-    var newUpdatedGame = this
 
-    val gifts = this.activeGifts.map {
+    var gifts: List<Gift> = this.activeGifts;
+
+    var giftedRacket: Racket = this.racket
+    var giftedBalls: List<Ball> = this.balls
+
+    gifts = gifts.map {
         if (!it.active) {
-            newUpdatedGame = chooseGiftAction(it, newUpdatedGame)
+            giftedRacket = applyRacketGiftEffect(giftedRacket, it)
+            giftedBalls = applyBallsGiftEffect(giftedBalls, it)
+
             println("action fired $it")
             it.copy(active = true)
+
         } else it
     }
+
+    val cancelGiftCaught = gifts.any { it.type == GiftType.CANCEL }
 
     val unfinishedGifts = gifts.filter { it.useCount != 0 }
     val glueGifts = checkIfGlueGiftIsActive(unfinishedGifts)
 
-    return newUpdatedGame.copy(
-        activeGifts = unfinishedGifts,
-        racket = if (glueGifts) racket.stuck() else racket.unStuck()
+    val finalGame = if (cancelGiftCaught)
+        giftCancelEffects(this)
+    else this.copy(
+        racket = if (glueGifts) giftedRacket.stuck() else giftedRacket.unStuck(),
+        balls = giftedBalls,
+        activeGifts = unfinishedGifts
     )
+
+    return finalGame
 }
 
 /*
