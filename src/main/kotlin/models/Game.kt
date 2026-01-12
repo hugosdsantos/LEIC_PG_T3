@@ -96,7 +96,7 @@ fun adjustHorizontalCordForStuckBall(game: Game, mouseX: Int): Game {
 fun addHitsToCollidedBricks(bricks: List<Brick>, balls: List<Ball>): List<Brick> {
     val newBricks = bricks.map { brick ->
         if (balls.any {
-                it.isCollidingWithBrick(brick) != Collision.NONE
+                checkBrickCollision(it, brick) != Collision.NONE
             })
             brick.addHit()
         else

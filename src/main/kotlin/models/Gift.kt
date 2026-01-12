@@ -68,22 +68,21 @@ fun getBreakableUnusedBrick(bricks: List<Brick>): Int {
     return index
 }
 
-fun chooseGiftAction(gift: Gift, game: Game): Game {
-    val giftedRacket = when (gift.type) {
-        GiftType.EXTENDED -> game.racket.setExtended()
-        GiftType.GLUE -> game.racket.toggleStickiness()
-        else -> game.racket
-    }
-    val giftedBalls = when (gift.type) {
-        GiftType.BALLS -> giftDuplicateBall(game.balls)
-        GiftType.FAST -> giftFastBalls(game.balls)
-        GiftType.SLOW -> giftSlowBalls(game.balls)
-        else -> game.balls
+fun applyRacketGiftEffect(racket: Racket, gift: Gift): Racket =
+    when (gift.type) {
+        GiftType.EXTENDED -> racket.setExtended()
+        GiftType.GLUE -> racket.toggleStickiness()
+        else -> racket
     }
 
-    return if (gift.type == GiftType.CANCEL) giftCancelGifts(game) else
-        game.copy(racket = giftedRacket, balls = giftedBalls)
-}
+
+fun applyBallsGiftEffect(balls: List<Ball>, gift: Gift): List<Ball> =
+    when (gift.type) {
+        GiftType.BALLS -> giftDuplicateBall(balls)
+        GiftType.FAST -> giftFastBalls(balls)
+        GiftType.SLOW -> giftSlowBalls(balls)
+        else -> balls
+    }
 
 fun giftDuplicateBall(balls: List<Ball>): List<Ball> {
     var newBallsList: List<Ball> = balls
@@ -94,7 +93,7 @@ fun giftDuplicateBall(balls: List<Ball>): List<Ball> {
     return newBallsList
 }
 
-fun giftCancelGifts(game: Game): Game {
+fun giftCancelEffects(game: Game): Game {
     val newBallsList: List<Ball> = game.balls.map { it.copy(weight = 1.0, stuck = false) }
     val racket: Racket = game.racket.copy(sticky = false, extended = false, width = RACKET_INITIAL_WIDTH)
 
@@ -102,7 +101,6 @@ fun giftCancelGifts(game: Game): Game {
 
     return game.copy(balls = newBallsList, racket = racket, activeGifts = emptyList())
 }
-
 
 fun giftSlowBalls(balls: List<Ball>) = balls.map { it.slowVelocity() }
 fun giftFastBalls(balls: List<Ball>) = balls.map { it.upVelocity() }

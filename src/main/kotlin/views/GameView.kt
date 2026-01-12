@@ -68,7 +68,7 @@ fun gameStart() {
         }
 
         if (it.code == KEY_C_CODE) {
-            game = giftCancelGifts(game)
+            game = giftCancelEffects(game)
             println("cancel")
         }
 
