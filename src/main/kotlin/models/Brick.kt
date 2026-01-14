@@ -58,7 +58,17 @@ fun checkBrickCollision(ball: Ball, brick: Brick): Collision {
 }
 
 fun Brick.addHit() = this.copy(hitCounter = this.hitCounter + 1)
-
-
 fun Brick.isBroken() = this.hitCounter == this.type.hits
 
+fun addHitsToCollidedBricks(bricks: List<Brick>, balls: List<Ball>): List<Brick> {
+    val newBricks = bricks.map { brick ->
+        if (balls.any {
+                checkBrickCollision(it, brick) != Collision.NONE
+            })
+            brick.addHit()
+        else
+            brick
+
+    }
+    return newBricks
+}

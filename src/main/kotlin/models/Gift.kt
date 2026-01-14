@@ -35,9 +35,11 @@ fun Gift.isOutOfBounds() = this.y > HEIGHT
 
 fun Gift.isCollidingWithRacket(racket: Racket) =
     ((this.x + GIFT_CIRCLE_RADIUS in racket.x..racket.x + racket.width) ||
-            (this.x - GIFT_CIRCLE_RADIUS in racket.x..racket.x + racket.width)) &&
-            (this.y + GIFT_CIRCLE_RADIUS in racket.y..racket.y + RACKET_HEIGHT)
+        (this.x - GIFT_CIRCLE_RADIUS in racket.x..racket.x + racket.width)) &&
+        (this.y + GIFT_CIRCLE_RADIUS in racket.y..racket.y + RACKET_HEIGHT)
 
+fun List<Gift>.filterBy(type: GiftType) = this.filter { it.type == type }
+fun List<Gift>.filterUnfinished() = this.filter { it.useCount != 0 }
 
 fun generateGifsInRandomBricks(bricks: List<Brick>): List<Brick> {
     val availableGifts =
@@ -97,11 +99,43 @@ fun giftCancelEffects(game: Game): Game {
     val newBallsList: List<Ball> = game.balls.map { it.copy(weight = 1.0, stuck = false) }
     val racket: Racket = game.racket.copy(sticky = false, extended = false, width = RACKET_INITIAL_WIDTH)
 
-
-
     return game.copy(balls = newBallsList, racket = racket, activeGifts = emptyList())
 }
 
 fun giftSlowBalls(balls: List<Ball>) = balls.map { it.slowVelocity() }
 fun giftFastBalls(balls: List<Ball>) = balls.map { it.upVelocity() }
 fun giftExtendedRacket(racket: Racket) = racket.toggleExtendiness()
+
+fun manageGlueGift(caughtGifts: List<Gift>, activeGifts: List<Gift>): List<Gift> {
+
+    val justGlueGifts = caughtGifts.filter { it.type.isGlue() }
+    val accGlueCount = justGlueGifts.fold(initial = 0) { sum, elem -> sum + elem.useCount }
+
+    return if (justGlueGifts.isNotEmpty() && checkIfGlueGiftIsActive(activeGifts))
+        updateGlueGiftCounter(
+            activeGifts =
+                addOtherActiveGifts(activeGifts = activeGifts, caughtGifts),
+            numberToAdd = accGlueCount
+        )
+    else activeGifts + caughtGifts
+}
+
+
+fun addOtherActiveGifts(activeGifts: List<Gift>, caughtGifts: List<Gift>): List<Gift> {
+    return activeGifts + caughtGifts.filter { !it.type.isGlue() }
+}
+
+fun updateGlueGiftCounter(activeGifts: List<Gift>, numberToAdd: Int): List<Gift> {
+    return activeGifts.map {
+        it.copy(
+            useCount =
+                if (it.type.isGlue())
+                    it.useCount + numberToAdd
+                else it.useCount
+        )
+    }
+}
+
+fun checkIfGlueGiftIsActive(activeGifts: List<Gift>): Boolean {
+    return activeGifts.filter { it.type.isGlue() }.isNotEmpty()
+}

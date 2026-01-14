@@ -83,9 +83,9 @@ fun Ball.verticalMovement(): Double =
 * */
 fun Ball.isCollidingWithRacket(racket: Racket): Collision {
     val horizontalCollision = (
-            (horizontalMovement() + BALL_RADIUS).roundToInt() in racket.x..(racket.x + racket.width) ||
-                    (horizontalMovement() - BALL_RADIUS).roundToInt() in racket.x..(racket.x + racket.width)
-            )
+        (horizontalMovement() + BALL_RADIUS).roundToInt() in racket.x..(racket.x + racket.width) ||
+            (horizontalMovement() - BALL_RADIUS).roundToInt() in racket.x..(racket.x + racket.width)
+        )
     val verticalCollision = (verticalMovement() + BALL_RADIUS).roundToInt() in racket.y..(racket.y + RACKET_HEIGHT)
 
     return when {
@@ -114,10 +114,10 @@ fun Ball.checkBricksCollision(bricks: List<Brick>): Collision {
 * */
 fun Ball.isCollidingWithArea() = when {
     this.horizontalMovement() - BALL_RADIUS <= 0 ||
-            this.horizontalMovement() + BALL_RADIUS >= WIDTH -> Collision.HORIZONTAL
+        this.horizontalMovement() + BALL_RADIUS >= WIDTH -> Collision.HORIZONTAL
 
     this.verticalMovement() - BALL_RADIUS <= 0 || (this.verticalMovement() + BALL_RADIUS >= HEIGHT &&
-            (runningENVIRONMENT == ENVIRONMENT.DEBUG && this.deltaY.sign != DIRECTIONS.UP.value))// && this.deltaY.sign == DIRECTIONS.UP.value
+        (runningENVIRONMENT == ENVIRONMENT.DEBUG && this.deltaY.sign != DIRECTIONS.UP.value))// && this.deltaY.sign == DIRECTIONS.UP.value
         -> Collision.VERTICAL
 
     else -> Collision.NONE
@@ -188,3 +188,7 @@ fun updateBallMovementAfterCollision(
 * */
 fun updateBallsMovement(balls: List<Ball>) = balls.map { it.move() }
 
+/*
+* Filtra a lista de bolas de jogo removendo as que estão fora dos limites de jogo
+* */
+fun filterBallsOutOfBounds(balls: List<Ball>) = balls.filter { !it.isOutOfBounds() }
