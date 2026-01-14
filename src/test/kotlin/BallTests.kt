@@ -8,16 +8,16 @@ class BallTests {
 
     @Test
     fun ballCollidingHorizontallyWithMultipleBrick() {
-        val bricks = listOf(
-            Brick(x = 288, y = 105, type = BrickType.GREEN, hitCounter = 0),
-            Brick(x = 288, y = 90, type = BrickType.RED, hitCounter = 0),
-        )
 
-        val ball = Ball(x = 283.0, y = 98.0, deltaX = 3, deltaY = -2, weight = 1.0, stuck = false)
+        val brick1 = Brick(x = 288, y = 105, type = BrickType.GREEN, hitCounter = 0)
+        val brick2 = Brick(x = 288, y = 90, type = BrickType.RED, hitCounter = 0)
 
-        bricks.forEach {
-            assertEquals(Collision.HORIZONTAL, checkBrickCollision(ball, it))
-        }
+
+        val ball = Ball(x = 283.0, y = 97.0, deltaX = 3, deltaY = -2, weight = 1.0, stuck = false)
+
+        assertEquals(Collision.NONE, checkBrickCollision(ball, brick1))
+        assertEquals(Collision.HORIZONTAL, checkBrickCollision(ball, brick2))
+
     }
 
     @Test
