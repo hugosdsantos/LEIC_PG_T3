@@ -20,8 +20,8 @@ fun drawBricks(bricks: List<Brick>) {
         arena.drawRect(
             x = it.x + BRICK_STROKE_OFFSET_ADJUSTMENT,
             y = it.y + BRICK_STROKE_OFFSET_ADJUSTMENT,
-            width = BRICK_WIDTH - BRICK_STROKE_OFFSET_ADJUSTMENT,
-            height = BRICK_HEIGHT - BRICK_STROKE_OFFSET_ADJUSTMENT,
+            width = BRICK_WIDTH - BRICK_STROKE_OFFSET_ADJUSTMENT * 2,
+            height = BRICK_HEIGHT - BRICK_STROKE_OFFSET_ADJUSTMENT * 2,
             color = BLACK,
             thickness = 2
         )
