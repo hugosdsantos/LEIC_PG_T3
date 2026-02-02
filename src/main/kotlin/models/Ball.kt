@@ -21,12 +21,13 @@ const val BALL_MAX_WEIGHT = 1.5
 const val BALL_MIN_WEIGHT = 0.5
 const val BALL_MAX_WEIGHT_DELTA = 0.5
 
+
 data class Ball(
     val x: Double = 0.0,
     val y: Double = 0.0,
     val deltaX: Int = 0,
     val deltaY: Int = 0,
-    val weight: Double = 1.0,
+    val mass: Double = 1.0,
     val stuck: Boolean = true
 )
 
@@ -45,8 +46,8 @@ fun generateNewBall(racket: Racket): Ball {
     return Ball(x = xCord, y = yCord, deltaX = xDelta, deltaY = -yDelta)
 }
 
-fun Ball.slowVelocity() = copy(weight = max(weight - BALL_MAX_WEIGHT_DELTA, BALL_MIN_WEIGHT))
-fun Ball.upVelocity() = copy(weight = min(weight + BALL_MAX_WEIGHT_DELTA, BALL_MAX_WEIGHT))
+fun Ball.slowVelocity() = copy(mass = max(mass - BALL_MAX_WEIGHT_DELTA, BALL_MIN_WEIGHT))
+fun Ball.upVelocity() = copy(mass = min(mass + BALL_MAX_WEIGHT_DELTA, BALL_MAX_WEIGHT))
 
 /*
 * Gera uma nova bola com movimentos horizontais e com velocidades verticais diferentes.
@@ -55,7 +56,6 @@ fun Ball.upVelocity() = copy(weight = min(weight + BALL_MAX_WEIGHT_DELTA, BALL_M
 fun generateNewBallFromPosition(xCord: Double, yCord: Double): Ball {
     val xDelta = (-MAX_DELTA_X..MAX_DELTA_X).random()
     val yDelta = (1..MAX_DELTA_Y).random()
-
 
     return Ball(x = xCord, y = yCord, deltaX = xDelta, deltaY = yDelta, stuck = false)
 }
@@ -68,15 +68,15 @@ fun Ball.move() =
     if (!this.stuck) copy(x = this.horizontalMovement(), y = this.verticalMovement()) else this
 
 
-fun ballMovementCalc(n: Double, delta: Int, weight: Double) =
-    (n + (delta * weight))
+fun ballMovementCalc(n: Double, delta: Int, mass: Double) =
+    (n + (delta * mass))
 
 fun Ball.horizontalMovement(): Double =
-    ballMovementCalc(this.x, this.deltaX, this.weight)
+    ballMovementCalc(this.x, this.deltaX, this.mass)
 
 
 fun Ball.verticalMovement(): Double =
-    ballMovementCalc(this.y, this.deltaY, this.weight)
+    ballMovementCalc(this.y, this.deltaY, this.mass)
 
 /*
 * Deteta se ha colisão com a racket retorna um enumerado conforme a colisão detetada

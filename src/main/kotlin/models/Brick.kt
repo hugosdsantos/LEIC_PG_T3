@@ -2,6 +2,9 @@ package org.example.models
 
 import pt.isel.canvas.BLACK
 import kotlin.math.abs
+import kotlin.math.max
+import kotlin.math.min
+import kotlin.math.roundToInt
 import kotlin.math.sign
 
 const val BRICK_HEIGHT = 15
@@ -38,33 +41,46 @@ fun List<Brick>.excludingGold() = this.filter { it.type != BrickType.GOLD }
 fun findClosestSide(value: Double, min: Double, max: Double) =
     if (abs(value - min) > abs(value - max)) max else min
 
-
 fun checkBrickCollision(ball: Ball, brick: Brick): Collision {
 
+    val ballX = ball.x
+    val ballY = ball.y
+
     // ponto mais próximo dentro do retângulo
-    val nearestX = ball.x.coerceIn(brick.x.toDouble(), brick.x.toDouble() + BRICK_WIDTH)
-    val nearestY = ball.y.coerceIn(brick.y.toDouble(), brick.y.toDouble() + BRICK_HEIGHT)
+    val nearestX = ballX.coerceIn(brick.x.toDouble(), brick.x.toDouble() + BRICK_WIDTH)
+    val nearestY = ballY.coerceIn(brick.y.toDouble(), brick.y.toDouble() + BRICK_HEIGHT)
 
     // diferença até ao centro da bola
-    val dx = ball.x - nearestX
-    val dy = ball.y - nearestY
+    val dx = ballX - nearestX
+    val dy = ballY - nearestY
 
     //lado mais perto do "edge" da bola
-    val nearestSideX = findClosestSide(ball.x, brick.x.toDouble(), brick.x.toDouble() + BRICK_WIDTH)
-    val nearestSideY = findClosestSide(ball.y, brick.y.toDouble(), brick.y.toDouble() + BRICK_HEIGHT)
+    val nearestSideX = findClosestSide(ballX, brick.x.toDouble(), brick.x.toDouble() + BRICK_WIDTH)
+    val nearestSideY = findClosestSide(ballY, brick.y.toDouble(), brick.y.toDouble() + BRICK_HEIGHT)
 
     val adjustedBallX =
-        if (ball.deltaX.sign == DIRECTIONS.RIGHT.value) ball.x + BALL_RADIUS else ball.x - BALL_RADIUS
+        when (ball.deltaX.sign) {
+            DIRECTIONS.RIGHT.value -> ballX + BALL_RADIUS
+            DIRECTIONS.LEFT.value -> ballX - BALL_RADIUS
+            else -> ballX
+        }
     val adjustedBallY =
-        if (ball.deltaY.sign == DIRECTIONS.UP.value) ball.y - BALL_RADIUS else ball.y + BALL_RADIUS
+        when (ball.deltaY.sign) {
+            DIRECTIONS.DOWN.value -> ballY + BALL_RADIUS
+            DIRECTIONS.UP.value -> ballY - BALL_RADIUS
+            else -> ballY
+        }
 
     // diferença do edge da bola até ao lado do brick mais perto
-    val distanceToSideX = adjustedBallX - nearestSideX
-    val distanceToSideY = adjustedBallY - nearestSideY
+    val distanceToSideX = (adjustedBallX - nearestSideX)
+    val distanceToSideY = (adjustedBallY - nearestSideY)
 
     // se distância < raio = colisão
     if (dx * dx + dy * dy <= BALL_RADIUS * BALL_RADIUS) {
 
+        if (dx == 0.0 && dy == 0.0) {
+            println("dx0 e dy0")
+        }
         return if (abs(distanceToSideX) < abs(distanceToSideY))
             Collision.HORIZONTAL
         else if (abs(distanceToSideY) < abs(distanceToSideX))
@@ -113,8 +129,9 @@ fun handleTopLeftCorner(ball: Ball): Collision = when (ball.deltaX.sign) {
         }
     }
 
-    else -> Collision.NONE
+    else -> Collision.VERTICAL
 }
+
 fun handleTopRightCorner(ball: Ball): Collision {
     return when (ball.deltaX.sign) {
         DIRECTIONS.RIGHT.value -> {
@@ -123,6 +140,7 @@ fun handleTopRightCorner(ball: Ball): Collision {
                 else -> Collision.NONE
             }
         }
+
         DIRECTIONS.LEFT.value -> {
             when (ball.deltaY.sign) {
                 DIRECTIONS.DOWN.value -> Collision.BOTH
@@ -130,9 +148,10 @@ fun handleTopRightCorner(ball: Ball): Collision {
             }
         }
 
-        else -> Collision.NONE
+        else -> Collision.VERTICAL
     }
 }
+
 fun handleBottomLeftCorner(ball: Ball): Collision {
     return when (ball.deltaX.sign) {
         DIRECTIONS.RIGHT.value -> {
@@ -152,6 +171,7 @@ fun handleBottomLeftCorner(ball: Ball): Collision {
         else -> Collision.NONE
     }
 }
+
 fun handleBottomRightCorner(ball: Ball): Collision {
     return when (ball.deltaX.sign) {
         DIRECTIONS.LEFT.value -> {

@@ -44,12 +44,12 @@ fun gameStart() {
 
         if (it.code == KEY_F_CODE) {
             game = game.copy(balls = giftFastBalls(game.balls))
-            println("fast balls ${game.balls.first().weight}")
+            println("fast balls ${game.balls.first().mass}")
         }
 
         if (it.code == KEY_S_CODE) {
             game = game.copy(balls = giftSlowBalls(game.balls))
-            println("slow balls ${game.balls.first().weight}")
+            println("slow balls ${game.balls.first().mass}")
         }
 
         if (it.code == KEY_D_CODE) {

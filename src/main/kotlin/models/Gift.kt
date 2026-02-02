@@ -43,7 +43,9 @@ fun List<Gift>.filterUnfinished() = this.filter { it.useCount != 0 }
 
 fun generateGifsInRandomBricks(bricks: List<Brick>): List<Brick> {
     val availableGifts =
-        GiftType.entries + GiftType.entries + GiftType.entries + GiftType.entries + GiftType.CANCEL + GiftType.CANCEL + GiftType.CANCEL + GiftType.CANCEL + GiftType.CANCEL
+        GiftType.entries + GiftType.entries + GiftType.entries + GiftType.entries +
+                GiftType.CANCEL + GiftType.CANCEL + GiftType.CANCEL + GiftType.CANCEL + GiftType.CANCEL
+
     val bricksMutableList = bricks.toMutableList()
 
     availableGifts.forEach {
@@ -96,7 +98,7 @@ fun giftDuplicateBall(balls: List<Ball>): List<Ball> {
 }
 
 fun giftCancelEffects(game: Game): Game {
-    val newBallsList: List<Ball> = game.balls.map { it.copy(weight = 1.0, stuck = false) }
+    val newBallsList: List<Ball> = game.balls.map { it.copy(mass = 1.0, stuck = false) }
     val racket: Racket = game.racket.copy(sticky = false, extended = false, width = RACKET_INITIAL_WIDTH)
 
     return game.copy(balls = newBallsList, racket = racket, activeGifts = emptyList())
@@ -104,7 +106,7 @@ fun giftCancelEffects(game: Game): Game {
 
 fun giftSlowBalls(balls: List<Ball>) = balls.map { it.slowVelocity() }
 fun giftFastBalls(balls: List<Ball>) = balls.map { it.upVelocity() }
-fun giftExtendedRacket(racket: Racket) = racket.toggleExtendiness()
+fun giftExtendedRacket(racket: Racket) = racket.toggleExtensiveness()
 
 fun manageGlueGift(caughtGifts: List<Gift>, activeGifts: List<Gift>): List<Gift> {
 

@@ -11,5 +11,12 @@ import kotlin.math.roundToInt
 * Desenha as bolas em jogo no canvas
 * */
 fun drawBalls(ballsList: List<Ball>) {
-    ballsList.forEach { arena.drawCircle(xCenter = it.x.roundToInt(), yCenter = it.y.roundToInt(), radius = BALL_RADIUS, color = BALL_COLOR) }
+    ballsList.forEach {
+        arena.drawCircle(
+            xCenter = it.x.roundToInt(),
+            yCenter = it.y.roundToInt(),
+            radius = BALL_RADIUS,
+            color = BALL_COLOR
+        )
+    }
 }
