@@ -1,7 +1,5 @@
 package org.example.models
 
-import org.example.ENVIRONMENT
-import org.example.runningENVIRONMENT
 import org.example.views.RACKET_DEFAULT_Y_CORD
 import org.example.views.RACKET_HEIGHT
 import pt.isel.canvas.CYAN
@@ -134,10 +132,7 @@ fun Ball.checkBricksCollision(bricks: List<Brick>): Collision {
 fun Ball.isCollidingWithArea() = when {
     this.horizontalMovement() - BALL_RADIUS <= 0 ||
             this.horizontalMovement() + BALL_RADIUS >= WIDTH -> Collision.HORIZONTAL
-
-    this.verticalMovement() - BALL_RADIUS <= 0 || (this.verticalMovement() + BALL_RADIUS >= HEIGHT &&
-            (runningENVIRONMENT == ENVIRONMENT.DEBUG && this.deltaY.sign != DIRECTIONS.UP.value))// && this.deltaY.sign == DIRECTIONS.UP.value
-        -> Collision.VERTICAL
+    this.verticalMovement() - BALL_RADIUS <= 0 -> Collision.VERTICAL
 
     else -> Collision.NONE
 }

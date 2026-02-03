@@ -1,7 +1,5 @@
 package org.example.models
 
-import org.example.ENVIRONMENT
-import org.example.runningENVIRONMENT
 import pt.isel.canvas.BLACK
 import pt.isel.canvas.Canvas
 
@@ -109,7 +107,7 @@ fun handleGameBallsBehaviour(balls: List<Ball>, racket: Racket, bricks: List<Bri
 
     val filteredBalls = filterBallsOutOfBounds(balls = balls)
     val newBallsUpdated =
-        (if (runningENVIRONMENT == ENVIRONMENT.DEBUG) balls else filteredBalls).map {
+        filteredBalls.map {
             checkAndUpdateBallMovementAfterCollision(
                 ball = it,
                 racket = racket,
@@ -182,7 +180,7 @@ fun updateGiftsIconMovement(gifts: List<Gift>) =
 
 fun Game.handleActiveGifts(): Game {
 
-    var gifts: List<Gift> = this.activeGifts;
+    var gifts: List<Gift> = this.activeGifts
 
     var giftedRacket: Racket = this.racket
     var giftedBalls: List<Ball> = this.balls
