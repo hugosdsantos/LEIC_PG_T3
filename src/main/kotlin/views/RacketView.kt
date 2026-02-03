@@ -25,9 +25,10 @@ const val RACKET_HEIGHT = 12
 const val RACKET_TOP_LAYER_HEIGHT = 5
 const val RACKET_BASE_COLOR = WHITE
 const val RACKET_EDGES_COLOR = RED
+const val RACKET_EXTENSION_SIZE = 30
 
 fun adjustSizeIfExtended(racket: Racket, width: Int):Int {
-    return if(racket.extended) width + 30 else width
+    return if(racket.extended) width + RACKET_EXTENSION_SIZE else width
 }
 
 fun drawRacketGlueSection(racket: Racket, useCount: Int = 0) {

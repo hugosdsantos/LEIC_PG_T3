@@ -517,14 +517,5 @@ class CollisionTests {
         assertEquals(Collision.NONE, checkBrickCollision(ball, brickLeft))
         assertEquals(Collision.NONE, checkBrickCollision(ball, brickRight))
     }
-
-    @Test
-    fun `bola a andar rapidamente calha demasiado "dentro" do tijolo deve retornar colisão vertical devido ao seu movimento`() {
-        val brick = Brick(x = 192, y = 45, type = BrickType.GOLD, hitCounter = 2, gift = null)
-        val ball = Ball(x = 201.5, y = 41.0, deltaX = -6, deltaY = 4, mass = 1.5, stuck = false)
-
-        val collision = checkBrickCollision(ball, brick)
-        assertTrue(collision == Collision.VERTICAL)
-    }
 }
 

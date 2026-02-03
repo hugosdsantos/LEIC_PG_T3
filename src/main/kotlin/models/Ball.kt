@@ -20,6 +20,7 @@ const val INITIAL_DELTA_Y = 2
 const val BALL_MAX_WEIGHT = 1.5
 const val BALL_MIN_WEIGHT = 0.5
 const val BALL_MAX_WEIGHT_DELTA = 0.5
+const val BALL_INITIAL_MASS = 1.0
 
 
 data class Ball(
@@ -27,7 +28,7 @@ data class Ball(
     val y: Double = 0.0,
     val deltaX: Int = 0,
     val deltaY: Int = 0,
-    val mass: Double = 1.0,
+    val mass: Double = BALL_INITIAL_MASS,
     val stuck: Boolean = true
 )
 
@@ -83,9 +84,9 @@ fun Ball.verticalMovement(): Double =
 * */
 fun Ball.isCollidingWithRacket(racket: Racket): Collision {
     val horizontalCollision = (
-        (horizontalMovement() + BALL_RADIUS).roundToInt() in racket.x..(racket.x + racket.width) ||
-            (horizontalMovement() - BALL_RADIUS).roundToInt() in racket.x..(racket.x + racket.width)
-        )
+            (horizontalMovement() + BALL_RADIUS).roundToInt() in racket.x..(racket.x + racket.width) ||
+                    (horizontalMovement() - BALL_RADIUS).roundToInt() in racket.x..(racket.x + racket.width)
+            )
     val verticalCollision = (verticalMovement() + BALL_RADIUS).roundToInt() in racket.y..(racket.y + RACKET_HEIGHT)
 
     return when {
@@ -96,9 +97,27 @@ fun Ball.isCollidingWithRacket(racket: Racket): Collision {
     }
 }
 
+/*
+* Permite obter uma lista mais pequenas dos tijolos que estão no mesmo "axis" que a bola.
+* Os tijolos que não estão na mesma linha horizontal e vertical não são apanhados.
+* */
+fun getBricksOnTrajectory(ball: Ball, bricks: List<Brick>): List<Brick> {
+
+    val adjustedX = ball.horizontalMovement()
+    val adjustedY = ball.verticalMovement()
+
+    val vBricks = bricks.filter { adjustedX in it.x.toDouble()..it.x.toDouble() + BRICK_WIDTH }
+    val hBricks = bricks.filter { adjustedY in it.y.toDouble()..it.y.toDouble() + BRICK_HEIGHT }
+
+
+    return vBricks + hBricks
+}
 
 fun Ball.checkBricksCollision(bricks: List<Brick>): Collision {
-    for (brick in bricks) {
+
+    val newBricks = getBricksOnTrajectory(ball = this, bricks)
+
+    for (brick in newBricks) {
         val res = checkBrickCollision(this, brick)
         if (res != Collision.NONE) {
             println("$res -> $this -> $brick")
@@ -114,10 +133,10 @@ fun Ball.checkBricksCollision(bricks: List<Brick>): Collision {
 * */
 fun Ball.isCollidingWithArea() = when {
     this.horizontalMovement() - BALL_RADIUS <= 0 ||
-        this.horizontalMovement() + BALL_RADIUS >= WIDTH -> Collision.HORIZONTAL
+            this.horizontalMovement() + BALL_RADIUS >= WIDTH -> Collision.HORIZONTAL
 
     this.verticalMovement() - BALL_RADIUS <= 0 || (this.verticalMovement() + BALL_RADIUS >= HEIGHT &&
-        (runningENVIRONMENT == ENVIRONMENT.DEBUG && this.deltaY.sign != DIRECTIONS.UP.value))// && this.deltaY.sign == DIRECTIONS.UP.value
+            (runningENVIRONMENT == ENVIRONMENT.DEBUG && this.deltaY.sign != DIRECTIONS.UP.value))// && this.deltaY.sign == DIRECTIONS.UP.value
         -> Collision.VERTICAL
 
     else -> Collision.NONE

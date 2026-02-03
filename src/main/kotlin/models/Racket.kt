@@ -3,6 +3,7 @@ package org.example.models
 import org.example.views.RACKET_DEFAULT_Y_CORD
 import org.example.views.RACKET_EDGE_ZONE
 import org.example.views.RACKET_EDGE_ZONE_DELTA_CHANGE
+import org.example.views.RACKET_EXTENSION_SIZE
 import org.example.views.RACKET_MIDDLE_EDGE_ZONE_DELTA_CHANGE
 import org.example.views.RACKET_MIDDLE_ZONE
 import org.example.views.RACKET_INITIAL_WIDTH
@@ -50,12 +51,12 @@ fun Racket.unStuck() = this.copy(sticky = false)
 fun Racket.stuck() = this.copy(sticky = true)
 
 fun Racket.toggleExtensiveness() = this.copy(
-    width = RACKET_INITIAL_WIDTH + if(!this.extended) 30 else 0,
+    width = RACKET_INITIAL_WIDTH + if(!this.extended) RACKET_EXTENSION_SIZE else 0,
     extended = !this.extended
 )
 
 fun Racket.setExtended() = this.copy(
-    width = RACKET_INITIAL_WIDTH + 30,
+    width = RACKET_INITIAL_WIDTH + RACKET_EXTENSION_SIZE,
     extended = true
 )
 

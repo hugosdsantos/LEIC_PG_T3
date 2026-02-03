@@ -7,8 +7,10 @@ import org.example.models.Brick
 import org.example.models.arena
 import pt.isel.canvas.BLACK
 
+const val BRICK_GIFT_TEXT_SIZE = 10
+const val BRICK_GIFT_Y_ADJUSTMENT = 4
 
-fun drawBricks(bricks: List<Brick>) {
+fun drawBricks(bricks: List<Brick>, showGift: Boolean = false) {
     bricks.forEach {
         arena.drawRect(
             x = it.x,
@@ -26,16 +28,16 @@ fun drawBricks(bricks: List<Brick>) {
             thickness = 2
         )
 
-        /*
-        if(it.gift != null){
+
+        if (showGift && it.gift != null) {
             arena.drawText(
                 x = it.x + BRICK_WIDTH / 2,
-                y = it.y + BRICK_HEIGHT - 4,
+                y = it.y + BRICK_HEIGHT - BRICK_GIFT_Y_ADJUSTMENT,
                 txt = it.gift.type.letter,
                 color = BLACK,
-                fontSize = 10
+                fontSize = BRICK_GIFT_TEXT_SIZE
             )
-        }*/
+        }
 
     }
 }

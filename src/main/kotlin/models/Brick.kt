@@ -35,6 +35,7 @@ enum class BrickType(val points: Int, val hits: Int, val color: Int) {
 
 data class Brick(val x: Int, val y: Int, val type: BrickType, val hitCounter: Int = 0, val gift: Gift? = null)
 
+fun Brick.isBreakable() = this.type.hits != INDESTRUCTIBLE;
 fun List<Brick>.excludingEmpty() = this.filter { it.type != BrickType.EMPTY }
 fun List<Brick>.excludingGold() = this.filter { it.type != BrickType.GOLD }
 
@@ -197,13 +198,13 @@ fun Brick.isBroken() = this.hitCounter == this.type.hits
 
 fun addHitsToCollidedBricks(bricks: List<Brick>, balls: List<Ball>): List<Brick> {
     val newBricks = bricks.map { brick ->
-        if (balls.any {
+        if (brick.isBreakable() && balls.any {
                 checkBrickCollision(it, brick) != Collision.NONE
-            })
+            }) {
             brick.addHit()
-        else
+        } else {
             brick
-
+        }
     }
     return newBricks
 }

@@ -10,6 +10,7 @@ import pt.isel.canvas.MAGENTA
 import pt.isel.canvas.YELLOW
 
 const val GIFT_GLUE_USECOUNT = 3
+const val GIFT_DELTA_Y = 2
 
 enum class GiftType(val letter: String, val color: Int, val useCount: Int = 0) {
     EXTENDED(letter = "E", color = GREEN),
@@ -35,8 +36,8 @@ fun Gift.isOutOfBounds() = this.y > HEIGHT
 
 fun Gift.isCollidingWithRacket(racket: Racket) =
     ((this.x + GIFT_CIRCLE_RADIUS in racket.x..racket.x + racket.width) ||
-        (this.x - GIFT_CIRCLE_RADIUS in racket.x..racket.x + racket.width)) &&
-        (this.y + GIFT_CIRCLE_RADIUS in racket.y..racket.y + RACKET_HEIGHT)
+            (this.x - GIFT_CIRCLE_RADIUS in racket.x..racket.x + racket.width)) &&
+            (this.y + GIFT_CIRCLE_RADIUS in racket.y..racket.y + RACKET_HEIGHT)
 
 fun List<Gift>.filterBy(type: GiftType) = this.filter { it.type == type }
 fun List<Gift>.filterUnfinished() = this.filter { it.useCount != 0 }
@@ -52,7 +53,7 @@ fun generateGifsInRandomBricks(bricks: List<Brick>): List<Brick> {
         val randomIndex = getBreakableUnusedBrick(bricks)
         val randomBrick = bricks[randomIndex]
         bricksMutableList[randomIndex] =
-            randomBrick.copy(gift = Gift(x = randomBrick.x, y = randomBrick.y, deltaY = 2, type = it))
+            randomBrick.copy(gift = Gift(x = randomBrick.x, y = randomBrick.y, deltaY = GIFT_DELTA_Y, type = it))
     }
 
     return bricksMutableList.toList()
@@ -98,7 +99,7 @@ fun giftDuplicateBall(balls: List<Ball>): List<Ball> {
 }
 
 fun giftCancelEffects(game: Game): Game {
-    val newBallsList: List<Ball> = game.balls.map { it.copy(mass = 1.0, stuck = false) }
+    val newBallsList: List<Ball> = game.balls.map { it.copy(mass = BALL_INITIAL_MASS, stuck = false) }
     val racket: Racket = game.racket.copy(sticky = false, extended = false, width = RACKET_INITIAL_WIDTH)
 
     return game.copy(balls = newBallsList, racket = racket, activeGifts = emptyList())

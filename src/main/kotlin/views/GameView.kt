@@ -67,6 +67,11 @@ fun gameStart() {
             println("cancel")
         }
 
+        if (it.code == KEY_G_CODE) {
+            game = game.copy(showGiftsOnBricks = !game.showGiftsOnBricks)
+            println("Gifts visiveis")
+        }
+
     }
 }
 
@@ -95,7 +100,7 @@ fun drawGame(game: Game) {
     drawRacket(racket = game.racket, glueCounter)
     drawBalls(ballsList = game.balls)
     drawGamePoints(points = game.points)
-    drawBricks(bricks = game.bricks)
+    drawBricks(bricks = game.bricks, showGift = game.showGiftsOnBricks)
     drawLives(lives = game.lives)
     drawActiveGifts(activeGifts = game.giftsOnScreen)
 }
