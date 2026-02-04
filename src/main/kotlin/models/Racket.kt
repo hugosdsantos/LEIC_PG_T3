@@ -46,6 +46,7 @@ fun checkRacketCollisionPosition(ball: Ball, racket: Racket) = when {
     else -> 0
 }
 
+
 fun Racket.toggleStickiness() = this.copy(sticky = !this.sticky)
 fun Racket.unStuck() = this.copy(sticky = false)
 fun Racket.stuck() = this.copy(sticky = true)

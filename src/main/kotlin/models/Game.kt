@@ -130,9 +130,13 @@ fun checkAndUpdateBallMovementAfterCollision(ball: Ball, racket: Racket, bricks:
         brickCollision = ball.checkBricksCollision(bricks)
     )
 
-fun generateLives(lives: Int): List<Ball> = (1..lives).map {
-    Ball(x = it * LIVES_X_SPACE.toDouble(), y = LIVES_Y_POSITION.toDouble(), stuck = true)
-}
+/*
+* Cria as "bolas" que representam as vidas para serem pintadas na tela.
+* */
+fun generateLives(lives: Int): List<Ball> =
+    (1..lives).map {
+        Ball(x = it * LIVES_X_SPACE.toDouble(), y = LIVES_Y_POSITION.toDouble(), stuck = true)
+    }
 
 
 fun Game.progressGame(): Game {
@@ -188,8 +192,8 @@ fun Game.handleActiveGifts(): Game {
 
     gifts = gifts.map {
         if (!it.active) {
-            giftedRacket = applyRacketGiftEffect(giftedRacket, it)
-            giftedBalls = applyBallsGiftEffect(giftedBalls, it)
+            giftedRacket = applyRacketGiftEffect(giftedRacket, gift = it)
+            giftedBalls = applyBallsGiftEffect(giftedBalls, gift = it)
 
             println("action fired $it")
             it.copy(active = true)
@@ -199,9 +203,9 @@ fun Game.handleActiveGifts(): Game {
 
     val cancelGiftCaught = gifts.filterBy(type = GiftType.CANCEL).isNotEmpty()
     val unfinishedGifts = gifts.filterUnfinished()
-    val glueGifts = checkIfGlueGiftIsActive(unfinishedGifts)
+    val glueGifts = checkIfGlueGiftIsActive(activeGifts = unfinishedGifts)
 
-    val finalGame = if (cancelGiftCaught) giftCancelEffects(this)
+    val finalGame = if (cancelGiftCaught) giftCancelEffects(game = this)
     else this.copy(
         racket = if (glueGifts) giftedRacket.stuck() else giftedRacket.unStuck(),
         balls = giftedBalls,

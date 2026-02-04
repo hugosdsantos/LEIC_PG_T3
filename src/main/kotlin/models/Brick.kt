@@ -2,9 +2,6 @@ package org.example.models
 
 import pt.isel.canvas.BLACK
 import kotlin.math.abs
-import kotlin.math.max
-import kotlin.math.min
-import kotlin.math.roundToInt
 import kotlin.math.sign
 
 const val BRICK_HEIGHT = 15
@@ -35,13 +32,27 @@ enum class BrickType(val points: Int, val hits: Int, val color: Int) {
 
 data class Brick(val x: Int, val y: Int, val type: BrickType, val hitCounter: Int = 0, val gift: Gift? = null)
 
-fun Brick.isBreakable() = this.type.hits != INDESTRUCTIBLE;
+//Função extensão de Brick que verifica se o tipo do tijolo é diferente dos tipos indestrutíveis
+fun Brick.isBreakable() = this.type.hits != INDESTRUCTIBLE
+//Função extensão de Brick que acrescenta um "hit" no tijolo após haver colisão com a bola
+fun Brick.addHit() = this.copy(hitCounter = this.hitCounter + 1)
+//Função extensão de Brick verifica se o tijolo já atingiu o numero de hits para se "partir". Devolve true ou false.
+fun Brick.isBroken() = this.hitCounter == this.type.hits
+
+
+//Função extensão da lista de tijolos que filtra automaticamente todos os tijolos que não sejam "EMPTY"
 fun List<Brick>.excludingEmpty() = this.filter { it.type != BrickType.EMPTY }
+//Função extensão da lista de tijolos que filtra automaticamente todos os tijolos que não sejam "GOLD" ou seja, indestrutíveis
 fun List<Brick>.excludingGold() = this.filter { it.type != BrickType.GOLD }
 
+//Após saber que ha colisão, a função retorna qual o lado do tijolo está mais proximo da bola para verificar o "ricochete"
 fun findClosestSide(value: Double, min: Double, max: Double) =
     if (abs(value - min) > abs(value - max)) max else min
 
+/*
+* Função que deteta se ha colisão entre a bola e um tijolo, mas reconhece colisões nos cantos e retorna a colisão mais adequada
+* dependendo do ângulo da colisão e o canto onde toca
+* */
 fun checkBrickCollisionWithCorners(ball: Ball, brick: Brick): Collision {
 
     val ballX = ball.horizontalMovement()
@@ -199,8 +210,11 @@ fun findNearestBrickSide(value: Int, side1: Int, side2: Int) = when {
     else -> value
 }
 
+/*
+* Função recebe uma bola e um tijolo e verifica se há colisão usando a fórmula da distância.
+* Distancia = sqrt((x2-x1)^2 + (y2-y1)^2)
+* */
 fun checkBrickCollision(ball: Ball, brick: Brick): Collision {
-
     val ballX = ball.horizontalMovement().toInt()
     val ballY = ball.verticalMovement().toInt()
 
@@ -224,10 +238,9 @@ fun checkBrickCollision(ball: Ball, brick: Brick): Collision {
     return Collision.NONE
 }
 
-
-fun Brick.addHit() = this.copy(hitCounter = this.hitCounter + 1)
-fun Brick.isBroken() = this.hitCounter == this.type.hits
-
+/*
+* Função que passa por todos os bricks e verifica se houve colisão e acrescenta um hit a esse tijolo
+* */
 fun addHitsToCollidedBricks(bricks: List<Brick>, balls: List<Ball>): List<Brick> {
     val newBricks = bricks.map { brick ->
         if (brick.isBreakable() && balls.any {

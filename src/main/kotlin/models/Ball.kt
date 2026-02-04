@@ -45,7 +45,9 @@ fun generateNewBall(racket: Racket): Ball {
     return Ball(x = xCord, y = yCord, deltaX = xDelta, deltaY = -yDelta)
 }
 
+//Aumenta a massa da bola fazendo que ande mais rápido. O max faz com que a massa não ultrapasse o 1.5
 fun Ball.slowVelocity() = copy(mass = max(mass - BALL_MAX_WEIGHT_DELTA, BALL_MIN_WEIGHT))
+//Diminui a massa da bola fazendo que ande mais devagar. O min faz com que a massa não seja inferior que 0.5
 fun Ball.upVelocity() = copy(mass = min(mass + BALL_MAX_WEIGHT_DELTA, BALL_MAX_WEIGHT))
 
 /*
@@ -67,13 +69,15 @@ fun Ball.move() =
     if (!this.stuck) copy(x = this.horizontalMovement(), y = this.verticalMovement()) else this
 
 
+//Faz o cálculo da nova coordenada com base no delta e na massa da bola
 fun ballMovementCalc(n: Double, delta: Int, mass: Double) =
     (n + (delta * mass))
 
+//Obtém o novo X da bola com base no movimento horizontal (deltaX) e a massa
 fun Ball.horizontalMovement(): Double =
     ballMovementCalc(this.x, this.deltaX, this.mass)
 
-
+//Obtém o novo Y da bola com base no movimento vertical (deltaY) e a massa
 fun Ball.verticalMovement(): Double =
     ballMovementCalc(this.y, this.deltaY, this.mass)
 
@@ -96,7 +100,7 @@ fun Ball.isCollidingWithRacket(racket: Racket): Collision {
 }
 
 /*
-* Permite obter uma lista mais pequenas dos tijolos que estão no mesmo "axis" que a bola.
+* Permite obter uma lista mais pequena de tijolos que estão posicionados no mesmo "axis" que a bola.
 * Os tijolos que não estão na mesma linha horizontal e vertical não são apanhados.
 * */
 fun getBricksOnTrajectory(ball: Ball, bricks: List<Brick>): List<Brick> {

@@ -9,6 +9,9 @@ const val GIFT_CIRCLE_RADIUS: Int = 10
 const val GIFT_LETTER_ADJUSTMENT: Int = 3
 const val GIFT_LETTER_SIZE: Int = 12
 
+/*
+* Desenha o GIFT na arena, depois do tijolo ser partido
+* */
 fun Gift.drawGift() {
     arena.drawCircle(
         xCenter = this.x,

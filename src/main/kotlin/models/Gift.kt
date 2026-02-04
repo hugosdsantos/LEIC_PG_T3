@@ -9,16 +9,17 @@ import pt.isel.canvas.GREEN
 import pt.isel.canvas.MAGENTA
 import pt.isel.canvas.YELLOW
 
+const val GIFT_USECOUNT = 1
 const val GIFT_GLUE_USECOUNT = 3
 const val GIFT_DELTA_Y = 2
 
 enum class GiftType(val letter: String, val color: Int, val useCount: Int = 0) {
-    EXTENDED(letter = "E", color = GREEN),
-    BALLS(letter = "B", color = YELLOW),
-    SLOW(letter = "S", color = BLUE),
-    FAST(letter = "F", color = CYAN),
+    EXTENDED(letter = "E", color = GREEN, useCount = GIFT_USECOUNT),
+    BALLS(letter = "B", color = YELLOW, useCount = GIFT_USECOUNT),
+    SLOW(letter = "S", color = BLUE, useCount = GIFT_USECOUNT),
+    FAST(letter = "F", color = CYAN, useCount = GIFT_USECOUNT),
     GLUE(letter = "G", color = MAGENTA, useCount = GIFT_GLUE_USECOUNT),
-    CANCEL(letter = "C", color = ORANGE_COLOR)
+    CANCEL(letter = "C", color = ORANGE_COLOR, useCount = GIFT_USECOUNT)
 }
 
 fun GiftType.isGlue() = this == GiftType.GLUE
@@ -29,7 +30,7 @@ data class Gift(
     val deltaY: Int = 1,
     val type: GiftType,
     val active: Boolean = false,
-    val useCount: Int = GIFT_GLUE_USECOUNT
+    val useCount: Int = type.useCount
 )
 
 fun Gift.isOutOfBounds() = this.y > HEIGHT
@@ -60,9 +61,6 @@ fun generateGifsInRandomBricks(bricks: List<Brick>): List<Brick> {
 }
 
 
-/*
-* CAN IMPROVE ON IT
-* */
 fun getBreakableUnusedBrick(bricks: List<Brick>): Int {
     var index: Int
     do {

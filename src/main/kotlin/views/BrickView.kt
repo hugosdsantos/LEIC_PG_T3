@@ -10,6 +10,9 @@ import pt.isel.canvas.BLACK
 const val BRICK_GIFT_TEXT_SIZE = 10
 const val BRICK_GIFT_Y_ADJUSTMENT = 4
 
+/*Desenha os tijolos na arena.
+* Se for passado o segundo parâmetro, é mostrado o "GIFT" de cada tijolo.
+*/
 fun drawBricks(bricks: List<Brick>, showGift: Boolean = false) {
     bricks.forEach {
         arena.drawRect(
