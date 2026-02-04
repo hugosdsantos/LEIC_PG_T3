@@ -7,6 +7,7 @@ import pt.isel.canvas.YELLOW
 
 
 fun gameStart() {
+
     var game = Game()
 
     arena.onTimeProgress(period = TIME_TICK_MLS) {

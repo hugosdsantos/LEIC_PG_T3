@@ -104,8 +104,14 @@ fun getBricksOnTrajectory(ball: Ball, bricks: List<Brick>): List<Brick> {
     val adjustedX = ball.horizontalMovement()
     val adjustedY = ball.verticalMovement()
 
-    val vBricks = bricks.filter { adjustedX in it.x.toDouble()..it.x.toDouble() + BRICK_WIDTH }
-    val hBricks = bricks.filter { adjustedY in it.y.toDouble()..it.y.toDouble() + BRICK_HEIGHT }
+    val vBricks = bricks.filter {
+        adjustedX - BALL_RADIUS in it.x.toDouble()..it.x.toDouble() + BRICK_WIDTH ||
+                adjustedX + BALL_RADIUS in it.x.toDouble()..it.x.toDouble() + BRICK_WIDTH
+    }
+    val hBricks = bricks.filter {
+        adjustedY - BALL_RADIUS in it.y.toDouble()..it.y.toDouble() + BRICK_HEIGHT ||
+                adjustedY + BALL_RADIUS in it.y.toDouble()..it.y.toDouble() + BRICK_HEIGHT
+    }
 
 
     return vBricks + hBricks
@@ -132,6 +138,7 @@ fun Ball.checkBricksCollision(bricks: List<Brick>): Collision {
 fun Ball.isCollidingWithArea() = when {
     this.horizontalMovement() - BALL_RADIUS <= 0 ||
             this.horizontalMovement() + BALL_RADIUS >= WIDTH -> Collision.HORIZONTAL
+
     this.verticalMovement() - BALL_RADIUS <= 0 -> Collision.VERTICAL
 
     else -> Collision.NONE

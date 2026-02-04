@@ -41,6 +41,7 @@ fun List<Brick>.excludingGold() = this.filter { it.type != BrickType.GOLD }
 
 fun findClosestSide(value: Double, min: Double, max: Double) =
     if (abs(value - min) > abs(value - max)) max else min
+
 fun checkBrickCollisionWithCorners(ball: Ball, brick: Brick): Collision {
 
     val ballX = ball.horizontalMovement()
@@ -91,6 +92,7 @@ fun checkBrickCollisionWithCorners(ball: Ball, brick: Brick): Collision {
     }
     return Collision.NONE
 }
+
 fun handleCornerCollision(ball: Ball, brick: Brick, nearestSideX: Double, nearestSideY: Double): Collision {
     val isTopLeftCorner = nearestSideX == brick.x.toDouble() && nearestSideY == brick.y.toDouble()
     val isTopRightCorner = nearestSideX != brick.x.toDouble() && nearestSideY == brick.y.toDouble()
@@ -112,6 +114,7 @@ fun handleCornerCollision(ball: Ball, brick: Brick, nearestSideX: Double, neares
         else -> Collision.NONE
     }
 }
+
 fun handleTopLeftCorner(ball: Ball): Collision = when (ball.deltaX.sign) {
     DIRECTIONS.RIGHT.value -> {
         when (ball.deltaY.sign) {
@@ -129,6 +132,7 @@ fun handleTopLeftCorner(ball: Ball): Collision = when (ball.deltaX.sign) {
 
     else -> Collision.VERTICAL
 }
+
 fun handleTopRightCorner(ball: Ball): Collision {
     return when (ball.deltaX.sign) {
         DIRECTIONS.RIGHT.value -> {
@@ -148,6 +152,7 @@ fun handleTopRightCorner(ball: Ball): Collision {
         else -> Collision.VERTICAL
     }
 }
+
 fun handleBottomLeftCorner(ball: Ball): Collision {
     return when (ball.deltaX.sign) {
         DIRECTIONS.RIGHT.value -> {
@@ -167,6 +172,7 @@ fun handleBottomLeftCorner(ball: Ball): Collision {
         else -> Collision.NONE
     }
 }
+
 fun handleBottomRightCorner(ball: Ball): Collision {
     return when (ball.deltaX.sign) {
         DIRECTIONS.LEFT.value -> {
@@ -209,13 +215,14 @@ fun checkBrickCollision(ball: Ball, brick: Brick): Collision {
     if (distanceX * distanceX + distanceY * distanceY <= BALL_RADIUS * BALL_RADIUS) {
 
         return if (abs(distanceX) > abs(distanceY))
-            Collision.HORIZONTAL
+        //Se a houver colisão, mas se não existir movimento lateral, então é colisão vertical
+            if (ball.deltaX == 0) Collision.VERTICAL else Collision.HORIZONTAL
         else
-            Collision.VERTICAL
+        //Se a houver colisão, mas se não existir movimento vertical, então é colisão horizontal
+            if (ball.deltaY == 0) Collision.HORIZONTAL else Collision.VERTICAL
     }
     return Collision.NONE
 }
-
 
 
 fun Brick.addHit() = this.copy(hitCounter = this.hitCounter + 1)
