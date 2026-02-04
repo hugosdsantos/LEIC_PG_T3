@@ -22,8 +22,8 @@ fun gameStart() {
     }
 
     arena.onMouseDown { me ->
-        if (me.down && game.lives > 0) {
-            if (game.balls.isEmpty()) {
+        if (me.down ) {
+            if (game.balls.isEmpty() && game.lives > 0) {
                 game = game.newBall()
                 game = game.loseLife()
             } else {
